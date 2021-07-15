@@ -5,7 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Movies.iml" filepath="$PROJECT_DIR$/.idea/modules/Movies.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Movies.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Movies.app.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/Movies.core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/Movies.core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/adapters/Movies.data_sources.iml" filepath="$PROJECT_DIR$/.idea/modules/adapters/Movies.data_sources.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/data_sources/Movies.data_sources.iml" filepath="$PROJECT_DIR$/.idea/modules/data_sources/Movies.data_sources.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/dependencies/Movies.dependencies.iml" filepath="$PROJECT_DIR$/.idea/modules/dependencies/Movies.dependencies.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/presentation/Movies.presentation.iml" filepath="$PROJECT_DIR$/.idea/modules/presentation/Movies.presentation.iml" />
     </modules>
