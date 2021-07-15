@@ -1,2 +1,6 @@
+include ':presentation'
+include ':dependencies'
+include ':data_sources'
+include ':core'
 include ':app'
 rootProject.name = "Movies"

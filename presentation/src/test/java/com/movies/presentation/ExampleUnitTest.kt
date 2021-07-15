@@ -1,4 +1,4 @@
-package com.movies
+package com.movies.presentation
 
 import org.junit.Test
 
