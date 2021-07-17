@@ -2,6 +2,7 @@ package com.movies.core.searching.results
 
 import com.movies.core.entities.EMPTY_TEXT
 import com.movies.core.entities.Movie
+import com.movies.core.entities.MovieDetails
 import com.movies.core.integration.DataSources
 import com.movies.core.presentation.PresentationAdapter
 import com.movies.core.presentation.PresentationPort
@@ -14,11 +15,26 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 
 class ThumbnailsBusinessRulesKtTest {
+
+    @Test
+    fun `onSelectMovie() then invoke DetailsDataSource_saveSelectedMovie()`() {
+        val expected = MovieDetails(Movie(title = "A"), listOf("A", "B"))
+
+        DataSources.moviesDetailsDataSource = mock()
+
+        val adapter = ThumbnailsAdapter(TestScheduler())
+        adapter.movie.onNext(Movie(title = "A"))
+        adapter.thumbnailImageUrls.onNext(listOf("A", "B"))
+        adapter.onSelectMovie()
+
+        verify(DataSources.moviesDetailsDataSource).saveSelectedMovie(eq(expected))
+    }
 
     @Test
     fun `onRequestImageUrl() with existing url then invoke callback `() {

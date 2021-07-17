@@ -12,9 +12,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.movies.core.details.onSelectMovie
 import com.movies.core.searching.results.ThumbnailsPort
 import com.movies.core.searching.results.onRequestImageUrl
+import com.movies.core.searching.results.onSelectMovie
 import com.movies.presentation.R
 import com.movies.presentation.navigate
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -47,7 +47,7 @@ internal class MovieThumbnailViewHolder(parentView: ViewGroup) : RecyclerView.Vi
         progressDisposable = updateProgress(item)
         imageLoadingJob = loadImage(item)
         itemView.setOnClickListener {
-            item.onSelectMovie(movie)
+            item.onSelectMovie()
             it.context.navigate(ACTION_MOVIE_THUMBNAIL_CLICKED)
         }
     }

@@ -61,6 +61,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="Gradle: Movies.core.core" level="project" />
     <orderEntry type="module-library">
       <library name="Gradle: io.reactivex.rxjava2:rxkotlin:2.4.0">
         <CLASSES>

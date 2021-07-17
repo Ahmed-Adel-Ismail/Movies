@@ -3,10 +3,18 @@ package com.movies.core.searching.results
 import com.movies.core.entities.BusinessRules
 import com.movies.core.entities.EMPTY_TEXT
 import com.movies.core.entities.Movie
+import com.movies.core.entities.MovieDetails
 import com.movies.core.integration.DataSources
 import com.movies.core.presentation.withDisposable
 import io.reactivex.Scheduler
 import io.reactivex.functions.Cancellable
+
+@BusinessRules
+fun ThumbnailsPort.onSelectMovie() {
+    DataSources.moviesDetailsDataSource.saveSelectedMovie(
+        MovieDetails(movie.value, thumbnailImageUrls.value)
+    )
+}
 
 @BusinessRules
 fun ThumbnailsPort.onRequestImageUrl(

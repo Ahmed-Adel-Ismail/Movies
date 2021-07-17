@@ -2,6 +2,7 @@ package com.movies.core.details
 
 import com.movies.core.entities.EMPTY_TEXT
 import com.movies.core.entities.Movie
+import com.movies.core.entities.MovieDetails
 import com.movies.core.entities.PaginatedBatch
 import com.movies.core.integration.DataSources
 import com.movies.core.presentation.PresentationAdapter
@@ -19,19 +20,6 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 
 class DetailsBusinessRulesKtTest {
-
-    @Test
-    fun `onSelectMovie() then invoke DetailsDataSource_saveSelectedMovie()`() {
-        val expected = Movie(title = "A")
-
-        DataSources.moviesDetailsDataSource = mock()
-
-        val adapter = DetailsAdapter(TestScheduler())
-
-        adapter.onSelectMovie(expected)
-
-        verify(DataSources.moviesDetailsDataSource).saveSelectedMovie(eq(expected))
-    }
 
     @Test
     fun `onLoadMoreImages() with null imagesUrls then never invoke DetailsDataSource_requestMovieImagesBatch()`() {
@@ -113,7 +101,7 @@ class DetailsBusinessRulesKtTest {
     fun `bindDetails() then invoke DetailsDataSource_loadSelectedMovie()`() {
         DataSources.moviesDetailsDataSource = mock {
             on { loadSelectedMovie() } doReturn Single.just(
-                Movie("A", "B", listOf("C"), listOf("D"))
+                MovieDetails(Movie("A", "B", listOf("C"), listOf("D")))
             )
         }
 
@@ -147,7 +135,7 @@ class DetailsBusinessRulesKtTest {
     fun `bindDetails() with null title then throw MissingMovieTitleException`() {
         DataSources.moviesDetailsDataSource = mock {
             on { loadSelectedMovie() } doReturn Single.just(
-                Movie(null, "B", listOf("C"), listOf("D"))
+                MovieDetails(Movie(null, "B", listOf("C"), listOf("D")))
             )
         }
 
@@ -166,7 +154,7 @@ class DetailsBusinessRulesKtTest {
     fun `bindDetails() then update title`() {
         DataSources.moviesDetailsDataSource = mock {
             on { loadSelectedMovie() } doReturn Single.just(
-                Movie("A", "B", listOf("C"), listOf("D"))
+                MovieDetails(Movie("A", "B", listOf("C"), listOf("D")))
             )
         }
 
@@ -184,7 +172,7 @@ class DetailsBusinessRulesKtTest {
     fun `bindDetails() then update year`() {
         DataSources.moviesDetailsDataSource = mock {
             on { loadSelectedMovie() } doReturn Single.just(
-                Movie("A", "B", listOf("C"), listOf("D"))
+                MovieDetails(Movie("A", "B", listOf("C"), listOf("D")))
             )
         }
 
@@ -202,7 +190,7 @@ class DetailsBusinessRulesKtTest {
     fun `bindDetails() with null year then update with EMPTY_TEXT`() {
         DataSources.moviesDetailsDataSource = mock {
             on { loadSelectedMovie() } doReturn Single.just(
-                Movie("A", null, listOf("C"), listOf("D"))
+                MovieDetails(Movie("A", null, listOf("C"), listOf("D")))
             )
         }
 
@@ -220,7 +208,7 @@ class DetailsBusinessRulesKtTest {
     fun `bindDetails() then update genres`() {
         DataSources.moviesDetailsDataSource = mock {
             on { loadSelectedMovie() } doReturn Single.just(
-                Movie("A", "B", listOf("C"), listOf("D"))
+                MovieDetails(Movie("A", "B", listOf("C"), listOf("D")))
             )
         }
 
@@ -238,7 +226,7 @@ class DetailsBusinessRulesKtTest {
     fun `bindDetails() with null genres then update with empty list`() {
         DataSources.moviesDetailsDataSource = mock {
             on { loadSelectedMovie() } doReturn Single.just(
-                Movie("A", "B", listOf("C"), null)
+                MovieDetails(Movie("A", "B", listOf("C"), null))
             )
         }
 
@@ -256,7 +244,7 @@ class DetailsBusinessRulesKtTest {
     fun `bindDetails() then update cast`() {
         DataSources.moviesDetailsDataSource = mock {
             on { loadSelectedMovie() } doReturn Single.just(
-                Movie("A", "B", listOf("C"), listOf("D"))
+                MovieDetails(Movie("A", "B", listOf("C"), listOf("D")))
             )
         }
 
@@ -274,7 +262,7 @@ class DetailsBusinessRulesKtTest {
     fun `bindDetails() with null cast then update with empty list`() {
         DataSources.moviesDetailsDataSource = mock {
             on { loadSelectedMovie() } doReturn Single.just(
-                Movie("A", "B", null, listOf("D"))
+                MovieDetails(Movie("A", "B", null, listOf("D")))
             )
         }
 
@@ -291,7 +279,7 @@ class DetailsBusinessRulesKtTest {
     @Test
     fun `bindDetails() then invoke DetailsDataSource_requestMovieImagesBatch() with valid PaginatedBatch`() {
         DataSources.moviesDetailsDataSource = mock {
-            on { loadSelectedMovie() } doReturn Single.just(Movie("A"))
+            on { loadSelectedMovie() } doReturn Single.just(MovieDetails(Movie("A")))
             on { requestMovieImagesBatch(anyOrNull()) } doReturn Single.just(PaginatedBatch("B"))
         }
 
@@ -313,6 +301,7 @@ class DetailsBusinessRulesKtTest {
 
 class DetailsAdapter(testScheduler: TestScheduler) : DetailsPort,
     PresentationPort by PresentationAdapter(testScheduler) {
+
     override val title = BehaviorSubject.create<String>()
     override val year = BehaviorSubject.create<String>()
     override val genres = BehaviorSubject.create<List<String>>()

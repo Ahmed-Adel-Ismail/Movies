@@ -13,7 +13,9 @@
         android:theme="@style/Theme.Movies"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".SplashActivity">
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,6 +24,9 @@
         </activity>
 
         <activity android:name=".SearchActivity" />
+        <activity
+            android:name=".MovieDetailsActivity"
+            android:launchMode="singleTop" />
 
         <meta-data
             android:name="com.movies.data.flickr-api-key"
