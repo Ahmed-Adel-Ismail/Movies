@@ -28,7 +28,7 @@ private fun MovieDetailsFragment.bindYear(view: View) {
 private fun MovieDetailsFragment.bindCast(view: View) {
     val cast = view.findViewById<TextView>(R.id.movieDetailsCast)
     val castLabel = view.findViewById<TextView>(R.id.movieDetailsCastLabel)
-    viewModel.genres.subscribeWithLifecycle(this) {
+    viewModel.cast.subscribeWithLifecycle(this) {
         if (it.isNotEmpty()) {
             showCast(cast, castLabel, it)
         } else {
