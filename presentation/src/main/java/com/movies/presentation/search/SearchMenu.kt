@@ -11,6 +11,8 @@ internal fun SearchFragment.inflateSearchView(inflater: MenuInflater, menu: Menu
     val searchViewMenuItem: MenuItem = menu.findItem(R.id.search)
     val searchView = searchViewMenuItem.actionView as SearchView
     searchView.queryHint = resources.getString(R.string.search_hint)
+    searchView.setQuery(viewModel.searchTerm.value, false)
+    searchView.clearFocus()
     searchView.setOnQueryTextListener(onQueryTextListener())
 }
 

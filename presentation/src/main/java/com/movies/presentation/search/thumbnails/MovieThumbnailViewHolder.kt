@@ -2,6 +2,7 @@ package com.movies.presentation.search.thumbnails
 
 import android.view.View
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -27,7 +28,7 @@ import kotlinx.coroutines.launch
 const val ACTION_MOVIE_THUMBNAIL_CLICKED =
     "com.movies.presentation.search.thumbnails.ACTION_MOVIE_THUMBNAIL_CLICKED"
 
-private const val IMAGE_DELAY_MILLIS = 1000L
+private const val IMAGE_DELAY_MILLIS = 500L
 
 internal class MovieThumbnailViewHolder(parentView: ViewGroup) : RecyclerView.ViewHolder(
     View.inflate(parentView.context, R.layout.view_movie_thumbnail, null)
@@ -61,6 +62,7 @@ internal class MovieThumbnailViewHolder(parentView: ViewGroup) : RecyclerView.Vi
 
     private fun loadUrlThenImages(item: MovieThumbnails) =
         item.onRequestImageUrl(AndroidSchedulers.mainThread()) {
+            image.visibility = VISIBLE
             Glide.with(image.context)
                 .load(it.firstOrNull())
                 .placeholder(android.R.drawable.ic_menu_crop)
@@ -80,8 +82,11 @@ internal class MovieThumbnailViewHolder(parentView: ViewGroup) : RecyclerView.Vi
         }
 
     fun unbind() {
+        image.visibility = INVISIBLE
+        image.setImageResource(0)
+        image.setImageDrawable(null)
+        image.setImageBitmap(null)
         imageLoadingJob?.cancel()
-        image.setImageResource(android.R.drawable.ic_menu_crop)
         title.text = null
         itemView.setOnClickListener(null)
         imageUrlCancellable?.cancel()
