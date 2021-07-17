@@ -1,0 +1,5 @@
+<resources>
+    <string name="splash_title">Welcome to the Movies world</string>
+    <string name="search_hint">Search Movies</string>
+    <string name="season">Season</string>
+</resources>

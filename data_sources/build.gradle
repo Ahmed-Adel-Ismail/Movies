@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    id 'kotlin-kapt'
 }
 
 android {
@@ -37,12 +36,11 @@ dependencies {
     implementation project(path: ':dependencies')
     implementation project(path: ':core')
 
-    implementation 'com.google.code.gson:gson:2.8.7'
-    implementation "androidx.room:room-runtime:2.3.0"
-    kapt "androidx.room:room-compiler:2.3.0"
-    implementation "androidx.room:room-ktx:2.3.0"
-    implementation "androidx.room:room-rxjava2:2.3.0"
-    implementation "androidx.room:room-guava:2.3.0"
+    api 'com.google.code.gson:gson:2.8.7'
+    api "androidx.room:room-runtime:2.3.0"
+    api "androidx.room:room-ktx:2.3.0"
+    api "androidx.room:room-rxjava2:2.3.0"
+    api "androidx.room:room-guava:2.3.0"
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation "androidx.room:room-testing:2.3.0"

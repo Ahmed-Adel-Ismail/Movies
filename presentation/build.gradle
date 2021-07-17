@@ -38,9 +38,15 @@ dependencies {
     api 'com.google.android.material:material:1.4.0'
     api 'androidx.constraintlayout:constraintlayout:2.0.4'
     api 'com.google.android.material:material:1.4.0'
+    api 'androidx.legacy:legacy-support-v4:1.0.0'
+    api "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
+    api 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    api "androidx.fragment:fragment-ktx:1.3.5"
 
     implementation project(path: ':dependencies')
     implementation project(path: ':core')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
