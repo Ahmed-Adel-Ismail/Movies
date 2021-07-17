@@ -4,5 +4,5 @@ import com.movies.core.entities.Movie
 import io.reactivex.Single
 
 interface SearchResultsDataSource {
-    fun requestImageUrl(movie: Movie) = Single.error<String>(NotImplementedError())
+    fun requestImageUrls(movie: Movie) = Single.error<List<String>>(NotImplementedError())
 }

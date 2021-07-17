@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.movies">
 
     <application
@@ -9,7 +10,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Movies">
+        android:theme="@style/Theme.Movies"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="m">
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,6 +22,14 @@
         </activity>
 
         <activity android:name=".SearchActivity" />
+
+        <meta-data
+            android:name="com.movies.data.flickr-api-key"
+            android:value="@string/flickr_api_key" />
+        <meta-data
+            android:name="com.movies.data.flickr-api-secret"
+            android:value="@string/flickr_api_secret" />
+
     </application>
 
 </manifest>

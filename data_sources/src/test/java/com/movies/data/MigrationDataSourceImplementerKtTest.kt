@@ -1,4 +1,4 @@
-package com.movies.adapters
+package com.movies.data
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

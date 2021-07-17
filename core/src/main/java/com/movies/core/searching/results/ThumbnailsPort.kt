@@ -4,8 +4,8 @@ import com.movies.core.entities.Movie
 import com.movies.core.presentation.PresentationPort
 import io.reactivex.subjects.BehaviorSubject
 
-interface ThumbnailPort : PresentationPort {
+interface ThumbnailsPort : PresentationPort {
     val movie: BehaviorSubject<Movie>
-    val loadingThumbnailImageUrl: BehaviorSubject<Boolean>
-    val thumbnailImageUrl: BehaviorSubject<String>
+    val loadingThumbnailImageUrls: BehaviorSubject<Boolean>
+    val thumbnailImageUrls: BehaviorSubject<List<String>>
 }

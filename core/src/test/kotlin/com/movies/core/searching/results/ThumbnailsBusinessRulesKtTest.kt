@@ -24,17 +24,17 @@ class ThumbnailsBusinessRulesKtTest {
     fun `onRequestImageUrl() with existing url then invoke callback `() {
 
         val testScheduler = TestScheduler()
-        val adapter = ThumbnailAdapter(testScheduler)
+        val adapter = ThumbnailsAdapter(testScheduler)
 
-        adapter.thumbnailImageUrl.onNext("A")
+        adapter.thumbnailImageUrls.onNext(listOf("A"))
 
-        var result: String? = null
-        adapter.onRequestImageUrl {
+        var result: List<String>? = null
+        adapter.onRequestImageUrl(testScheduler) {
             result = it
         }
         testScheduler.triggerActions()
 
-        assertEquals("A", result)
+        assertEquals(listOf("A"), result)
     }
 
     @Test
@@ -43,27 +43,27 @@ class ThumbnailsBusinessRulesKtTest {
         DataSources.moviesSearchResultsDataSource = mock()
 
         val testScheduler = TestScheduler()
-        val adapter = ThumbnailAdapter(testScheduler)
+        val adapter = ThumbnailsAdapter(testScheduler)
 
-        adapter.thumbnailImageUrl.onNext("A")
+        adapter.thumbnailImageUrls.onNext(listOf("A"))
 
-        adapter.onRequestImageUrl {
+        adapter.onRequestImageUrl(testScheduler) {
             // do nothing
         }
         testScheduler.triggerActions()
 
-        verify(DataSources.moviesSearchResultsDataSource, never()).requestImageUrl(any())
+        verify(DataSources.moviesSearchResultsDataSource, never()).requestImageUrls(any())
     }
 
     @Test
     fun `onRequestImageUrl() with existing url then never update loadingThumbnailImageUrl`() {
         val testScheduler = TestScheduler()
-        val adapter = ThumbnailAdapter(testScheduler)
+        val adapter = ThumbnailsAdapter(testScheduler)
 
-        adapter.thumbnailImageUrl.onNext("A")
-        adapter.loadingThumbnailImageUrl
+        adapter.thumbnailImageUrls.onNext(listOf("A"))
+        adapter.loadingThumbnailImageUrls
             .test()
-            .also { adapter.onRequestImageUrl {} }
+            .also { adapter.onRequestImageUrl(testScheduler) {} }
             .also { testScheduler.triggerActions() }
             .assertNoValues()
     }
@@ -71,15 +71,15 @@ class ThumbnailsBusinessRulesKtTest {
     @Test
     fun `onRequestImageUrl() with no movie then invoke callback with EMPTY_TEXT `() {
         val testScheduler = TestScheduler()
-        val adapter = ThumbnailAdapter(testScheduler)
+        val adapter = ThumbnailsAdapter(testScheduler)
 
-        var result: String? = null
-        adapter.onRequestImageUrl {
+        var result: List<String>? = null
+        adapter.onRequestImageUrl(testScheduler) {
             result = it
         }
         testScheduler.triggerActions()
 
-        assertEquals(EMPTY_TEXT, result)
+        assertEquals(listOf(EMPTY_TEXT), result)
     }
 
     @Test
@@ -87,24 +87,24 @@ class ThumbnailsBusinessRulesKtTest {
         DataSources.moviesSearchResultsDataSource = mock()
 
         val testScheduler = TestScheduler()
-        val adapter = ThumbnailAdapter(testScheduler)
+        val adapter = ThumbnailsAdapter(testScheduler)
 
-        adapter.onRequestImageUrl {
+        adapter.onRequestImageUrl(testScheduler) {
             // do nothing
         }
         testScheduler.triggerActions()
 
-        verify(DataSources.moviesSearchResultsDataSource, never()).requestImageUrl(any())
+        verify(DataSources.moviesSearchResultsDataSource, never()).requestImageUrls(any())
     }
 
     @Test
     fun `onRequestImageUrl() with no movie then never update loadingThumbnailImageUrl`() {
         val testScheduler = TestScheduler()
-        val adapter = ThumbnailAdapter(testScheduler)
+        val adapter = ThumbnailsAdapter(testScheduler)
 
-        adapter.loadingThumbnailImageUrl
+        adapter.loadingThumbnailImageUrls
             .test()
-            .also { adapter.onRequestImageUrl {} }
+            .also { adapter.onRequestImageUrl(testScheduler) {} }
             .also { testScheduler.triggerActions() }
             .assertNoValues()
     }
@@ -113,16 +113,16 @@ class ThumbnailsBusinessRulesKtTest {
     fun `onRequestImageUrl() then update loadingThumbnailImageUrl with true `() {
 
         DataSources.moviesSearchResultsDataSource = mock {
-            on { requestImageUrl(any()) } doReturn Single.just("URL")
+            on { requestImageUrls(any()) } doReturn Single.just(listOf("URL"))
         }
 
         val testScheduler = TestScheduler()
-        val adapter = ThumbnailAdapter(testScheduler)
+        val adapter = ThumbnailsAdapter(testScheduler)
 
         adapter.movie.onNext(Movie("A"))
-        adapter.loadingThumbnailImageUrl
+        adapter.loadingThumbnailImageUrls
             .test()
-            .also { adapter.onRequestImageUrl {} }
+            .also { adapter.onRequestImageUrl(testScheduler) {} }
             .also { testScheduler.triggerActions() }
             .assertValueAt(0, true)
     }
@@ -130,69 +130,69 @@ class ThumbnailsBusinessRulesKtTest {
     @Test
     fun `onRequestImageUrl() then invoke SearchResultsDataSource_requestImageUrl()`() {
         DataSources.moviesSearchResultsDataSource = mock {
-            on { requestImageUrl(any()) } doReturn Single.just("URL")
+            on { requestImageUrls(any()) } doReturn Single.just(listOf("URL"))
         }
 
         val testScheduler = TestScheduler()
-        val adapter = ThumbnailAdapter(testScheduler)
+        val adapter = ThumbnailsAdapter(testScheduler)
 
         adapter.movie.onNext(Movie("A"))
-        adapter.onRequestImageUrl {}
+        adapter.onRequestImageUrl(testScheduler) {}
         testScheduler.triggerActions()
 
-        verify(DataSources.moviesSearchResultsDataSource).requestImageUrl(any())
+        verify(DataSources.moviesSearchResultsDataSource).requestImageUrls(any())
     }
 
     @Test
     fun `onRequestImageUrl() then update thumbnailImageUrl with result`() {
         DataSources.moviesSearchResultsDataSource = mock {
-            on { requestImageUrl(any()) } doReturn Single.just("URL")
+            on { requestImageUrls(any()) } doReturn Single.just(listOf("URL"))
         }
 
         val testScheduler = TestScheduler()
-        val adapter = ThumbnailAdapter(testScheduler)
+        val adapter = ThumbnailsAdapter(testScheduler)
 
         adapter.movie.onNext(Movie("A"))
-        adapter.thumbnailImageUrl
+        adapter.thumbnailImageUrls
             .test()
-            .also { adapter.onRequestImageUrl {} }
+            .also { adapter.onRequestImageUrl(testScheduler) {} }
             .also { testScheduler.triggerActions() }
-            .assertValues("URL")
+            .assertValues(listOf("URL"))
     }
 
     @Test
     fun `onRequestImageUrl() then update callback with result`() {
         DataSources.moviesSearchResultsDataSource = mock {
-            on { requestImageUrl(any()) } doReturn Single.just("URL")
+            on { requestImageUrls(any()) } doReturn Single.just(listOf("URL"))
         }
 
         val testScheduler = TestScheduler()
-        val adapter = ThumbnailAdapter(testScheduler)
+        val adapter = ThumbnailsAdapter(testScheduler)
 
         adapter.movie.onNext(Movie("A"))
 
-        var result: String? = null
-        adapter.onRequestImageUrl {
+        var result: List<String>? = null
+        adapter.onRequestImageUrl(testScheduler) {
             result = it
         }
         testScheduler.triggerActions()
 
-        assertEquals("URL", result)
+        assertEquals(listOf("URL"), result)
     }
 
     @Test
     fun `onRequestImageUrl() with cancelled operation then never update callback`() {
         DataSources.moviesSearchResultsDataSource = mock {
-            on { requestImageUrl(any()) } doReturn Single.just("URL")
+            on { requestImageUrls(any()) } doReturn Single.just(listOf("URL"))
         }
 
         val testScheduler = TestScheduler()
-        val adapter = ThumbnailAdapter(testScheduler)
+        val adapter = ThumbnailsAdapter(testScheduler)
 
         adapter.movie.onNext(Movie("A"))
 
-        var result: String? = null
-        val cancellable = adapter.onRequestImageUrl {
+        var result: List<String>? = null
+        val cancellable = adapter.onRequestImageUrl(testScheduler) {
             result = it
         }
         cancellable.cancel()
@@ -204,16 +204,16 @@ class ThumbnailsBusinessRulesKtTest {
     @Test
     fun `onRequestImageUrl() then update loadingThumbnailImageUrl with false`() {
         DataSources.moviesSearchResultsDataSource = mock {
-            on { requestImageUrl(any()) } doReturn Single.just("URL")
+            on { requestImageUrls(any()) } doReturn Single.just(listOf("URL"))
         }
 
         val testScheduler = TestScheduler()
-        val adapter = ThumbnailAdapter(testScheduler)
+        val adapter = ThumbnailsAdapter(testScheduler)
 
         adapter.movie.onNext(Movie("A"))
-        adapter.loadingThumbnailImageUrl
+        adapter.loadingThumbnailImageUrls
             .test()
-            .also { adapter.onRequestImageUrl {} }
+            .also { adapter.onRequestImageUrl(testScheduler) {} }
             .also { testScheduler.triggerActions() }
             .assertValueAt(1, false)
     }
@@ -221,53 +221,53 @@ class ThumbnailsBusinessRulesKtTest {
     @Test
     fun `onRequestImageUrl() with error then update thumbnailImageUrl with EMPTY_TEXT`() {
         DataSources.moviesSearchResultsDataSource = mock {
-            on { requestImageUrl(any()) } doReturn Single.error(UnsupportedOperationException())
+            on { requestImageUrls(any()) } doReturn Single.error(UnsupportedOperationException())
         }
 
         val testScheduler = TestScheduler()
-        val adapter = ThumbnailAdapter(testScheduler)
+        val adapter = ThumbnailsAdapter(testScheduler)
 
         adapter.movie.onNext(Movie("A"))
-        adapter.thumbnailImageUrl
+        adapter.thumbnailImageUrls
             .test()
-            .also { adapter.onRequestImageUrl {} }
+            .also { adapter.onRequestImageUrl(testScheduler) {} }
             .also { testScheduler.triggerActions() }
-            .assertValues(EMPTY_TEXT)
+            .assertValues(listOf(EMPTY_TEXT))
     }
 
     @Test
     fun `onRequestImageUrl() with error then invoke callback with EMPTY_TEXT`() {
         DataSources.moviesSearchResultsDataSource = mock {
-            on { requestImageUrl(any()) } doReturn Single.error(UnsupportedOperationException())
+            on { requestImageUrls(any()) } doReturn Single.error(UnsupportedOperationException())
         }
 
         val testScheduler = TestScheduler()
-        val adapter = ThumbnailAdapter(testScheduler)
+        val adapter = ThumbnailsAdapter(testScheduler)
 
         adapter.movie.onNext(Movie("A"))
 
-        var result: String? = null
-        adapter.onRequestImageUrl {
+        var result: List<String>? = null
+        adapter.onRequestImageUrl(testScheduler) {
             result = it
         }
         testScheduler.triggerActions()
 
-        assertEquals(EMPTY_TEXT, result)
+        assertEquals(listOf(EMPTY_TEXT), result)
     }
 
     @Test
     fun `onRequestImageUrl() with error then update loadingThumbnailImageUrl with false`() {
         DataSources.moviesSearchResultsDataSource = mock {
-            on { requestImageUrl(any()) } doReturn Single.error(UnsupportedOperationException())
+            on { requestImageUrls(any()) } doReturn Single.error(UnsupportedOperationException())
         }
 
         val testScheduler = TestScheduler()
-        val adapter = ThumbnailAdapter(testScheduler)
+        val adapter = ThumbnailsAdapter(testScheduler)
 
         adapter.movie.onNext(Movie("A"))
-        adapter.loadingThumbnailImageUrl
+        adapter.loadingThumbnailImageUrls
             .test()
-            .also { adapter.onRequestImageUrl {} }
+            .also { adapter.onRequestImageUrl(testScheduler) {} }
             .also { testScheduler.triggerActions() }
             .assertValueAt(1, false)
     }
@@ -278,9 +278,9 @@ class ThumbnailsBusinessRulesKtTest {
     }
 }
 
-class ThumbnailAdapter(testScheduler: TestScheduler) : ThumbnailPort,
+class ThumbnailsAdapter(testScheduler: TestScheduler) : ThumbnailsPort,
     PresentationPort by PresentationAdapter(testScheduler) {
     override val movie = BehaviorSubject.create<Movie>()
-    override val loadingThumbnailImageUrl = BehaviorSubject.create<Boolean>()
-    override val thumbnailImageUrl = BehaviorSubject.create<String>()
+    override val loadingThumbnailImageUrls = BehaviorSubject.create<Boolean>()
+    override val thumbnailImageUrls = BehaviorSubject.create<List<String>>()
 }

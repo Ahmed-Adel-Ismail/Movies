@@ -1,4 +1,4 @@
-package com.movies.adapters
+package com.movies.data
 
 import android.content.Context
 import com.google.gson.Gson

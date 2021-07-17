@@ -5,21 +5,25 @@ import com.movies.core.entities.EMPTY_TEXT
 import com.movies.core.entities.Movie
 import com.movies.core.integration.DataSources
 import com.movies.core.presentation.withDisposable
+import io.reactivex.Scheduler
 import io.reactivex.functions.Cancellable
 
 @BusinessRules
-fun ThumbnailPort.onRequestImageUrl(onUrlReady: (String) -> Unit): Cancellable {
+fun ThumbnailsPort.onRequestImageUrl(
+    callbackSchedulers: Scheduler,
+    onUrlsReady: (List<String>) -> Unit
+): Cancellable {
 
-    if (useCurrentUrlIfAvailable(onUrlReady)) return Cancellable { }
+    if (useCurrentUrlIfAvailable(onUrlsReady)) return Cancellable { }
 
     val movie = movie.value
     if (movie == null) {
-        onUrlReady(EMPTY_TEXT)
+        onUrlsReady(listOf(EMPTY_TEXT))
         return Cancellable { }
     }
 
     val cancellable = CancellableOperation()
-    requestUrlFromDataSource(movie, cancellable, onUrlReady)
+    requestUrlFromDataSource(movie, cancellable, callbackSchedulers, onUrlsReady)
     return cancellable
 }
 
@@ -30,29 +34,31 @@ private class CancellableOperation : Cancellable {
     }
 }
 
-private fun ThumbnailPort.requestUrlFromDataSource(
+private fun ThumbnailsPort.requestUrlFromDataSource(
     movie: Movie,
     cancellableOperation: CancellableOperation,
-    onUrlReady: (String) -> Unit
+    callbackScheduler: Scheduler,
+    onUrlReady: (List<String>) -> Unit
 ) = withDisposable {
-    loadingThumbnailImageUrl.onNext(true)
+    loadingThumbnailImageUrls.onNext(true)
     DataSources.moviesSearchResultsDataSource
-        .requestImageUrl(movie)
+        .requestImageUrls(movie)
         .subscribeOn(scheduler)
         .observeOn(scheduler)
-        .doOnError(errors::onNext)
-        .onErrorReturn { EMPTY_TEXT }
-        .doFinally { loadingThumbnailImageUrl.onNext(false) }
+        .doOnError { updateErrors(it) }
+        .onErrorReturn { listOf(EMPTY_TEXT) }
+        .doOnSuccess { thumbnailImageUrls.onNext(it) }
+        .doFinally { loadingThumbnailImageUrls.onNext(false) }
+        .observeOn(callbackScheduler)
         .subscribeCatching {
-            thumbnailImageUrl.onNext(it)
             if (!cancellableOperation.isCancelled) onUrlReady(it)
         }
 }
 
-private fun ThumbnailPort.useCurrentUrlIfAvailable(onUrlReady: (String) -> Unit): Boolean {
-    val url = thumbnailImageUrl.value
+private fun ThumbnailsPort.useCurrentUrlIfAvailable(onUrlsReady: (List<String>) -> Unit): Boolean {
+    val url = thumbnailImageUrls.value
     if (url != null) {
-        onUrlReady(url)
+        onUrlsReady(url)
         return true
     }
     return false

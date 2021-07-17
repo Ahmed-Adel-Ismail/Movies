@@ -21,9 +21,10 @@
 
     <TextView
         android:id="@+id/movieThumbnailTitle"
-        android:layout_width="match_parent"
+        android:layout_width="110dp"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
+        android:alpha="0.7"
         android:background="@android:color/background_dark"
         android:ellipsize="end"
         android:gravity="center"
@@ -40,11 +41,12 @@
     <ProgressBar
         android:id="@+id/movieThumbnailProgress"
         style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/movieThumbnail"
         app:layout_constraintEnd_toEndOf="@+id/movieThumbnail"
         app:layout_constraintStart_toStartOf="@+id/movieThumbnail"
-        app:layout_constraintTop_toTopOf="@+id/movieThumbnail" />
+        app:layout_constraintTop_toTopOf="@+id/movieThumbnail"
+        tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>

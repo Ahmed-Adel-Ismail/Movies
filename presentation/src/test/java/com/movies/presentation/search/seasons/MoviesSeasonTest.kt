@@ -4,13 +4,14 @@ import com.movies.core.entities.Movie
 import com.movies.core.entities.MoviesSection
 import com.movies.core.presentation.PresentationPort
 import com.movies.core.searching.results.SeasonPort
-import com.movies.core.searching.results.ThumbnailPort
+import com.movies.core.searching.results.ThumbnailsPort
 import com.movies.presentation.search.PresentationAdapter
+import com.movies.presentation.search.thumbnails.MovieThumbnails
 import io.reactivex.schedulers.TestScheduler
 import io.reactivex.subjects.BehaviorSubject
 import org.junit.Test
 
-class MoviesMoviesSeasonTest {
+class MoviesSeasonTest {
     @Test
     fun `bindMoviesThumbnails() with movies then update moviesThumbnails`() {
         val testScheduler = TestScheduler()
@@ -41,9 +42,9 @@ class MoviesMoviesSeasonTest {
     }
 }
 
-class SeasonAdapter(testScheduler: TestScheduler) : SeasonPort,
+class SeasonAdapter(testScheduler: TestScheduler) : SeasonPort<MovieThumbnails>,
     PresentationPort by PresentationAdapter(testScheduler) {
     override val moviesSection = BehaviorSubject.create<MoviesSection>()
-    override val moviesThumbnails = BehaviorSubject.create<List<ThumbnailPort>>()
+    override val moviesThumbnails = BehaviorSubject.create<List<MovieThumbnails>>()
 }
 

@@ -122,7 +122,17 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="library" scope="TEST" name="Gradle: org.mockito.kotlin:mockito-kotlin:3.2.0" level="project" />
+    <orderEntry type="module-library" scope="TEST">
+      <library name="Gradle: org.mockito.kotlin:mockito-kotlin:3.2.0">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mockito.kotlin/mockito-kotlin/3.2.0/2c3db7f408f1b92fdfc1e5e2b25c52c325d09da9/mockito-kotlin-3.2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mockito.kotlin/mockito-kotlin/3.2.0/7aa636627611c6eeaa32e78b586a4076f3d2201a/mockito-kotlin-3.2.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
     <orderEntry type="module-library" scope="TEST">
       <library name="Gradle: org.hamcrest:hamcrest-core:1.3">
         <CLASSES>
@@ -134,9 +144,49 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="library" scope="TEST" name="Gradle: org.mockito:mockito-core:3.9.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Gradle: net.bytebuddy:byte-buddy:1.10.20" level="project" />
-    <orderEntry type="library" scope="TEST" name="Gradle: net.bytebuddy:byte-buddy-agent:1.10.20" level="project" />
-    <orderEntry type="library" scope="TEST" name="Gradle: org.objenesis:objenesis:3.2" level="project" />
+    <orderEntry type="module-library" scope="TEST">
+      <library name="Gradle: org.mockito:mockito-core:3.9.0">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mockito/mockito-core/3.9.0/b7573430aea743b26434b44f4f46272af613e660/mockito-core-3.9.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mockito/mockito-core/3.9.0/3f2009c0b6ec7ed0274491dedd71bc4b9e19ab33/mockito-core-3.9.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="Gradle: net.bytebuddy:byte-buddy:1.10.20">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy/1.10.20/c5d2d12c75c5d52f8df33f4211e6dbd05a42b117/byte-buddy-1.10.20.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy/1.10.20/e882e88ef208f9741b89bc201e4bb5638932f648/byte-buddy-1.10.20-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="Gradle: net.bytebuddy:byte-buddy-agent:1.10.20">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.10.20/8391bfea9da53fd92edd4a453571ef70b3aae09f/byte-buddy-agent-1.10.20.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.10.20/e7d443427ebeafe83ee8af42bef1e7e7356ee1d/byte-buddy-agent-1.10.20-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="Gradle: org.objenesis:objenesis:3.2">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.objenesis/objenesis/3.2/7fadf57620c8b8abdf7519533e5527367cb51f09/objenesis-3.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.objenesis/objenesis/3.2/9f5da90020a255f25b6d8da8db273e2d38ce9805/objenesis-3.2-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

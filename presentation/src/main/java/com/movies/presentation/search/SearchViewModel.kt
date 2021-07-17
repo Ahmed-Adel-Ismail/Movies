@@ -31,7 +31,12 @@ class SearchViewModel : ViewModel(), SearchSeasonsPort {
         bindSearchResults()
     }
 
-    override fun onCleared() = dispose()
+    override fun onCleared() {
+        searchResults.share().subscribeCatching { seasons ->
+            seasons.forEach { it.onCleared() }
+        }
+        dispose()
+    }
 }
 
 fun SearchSeasonsPort.bindSearchResults() = withDisposable {

@@ -33,7 +33,7 @@ internal class MoviesSeasonViewHolder(parentView: ViewGroup) : RecyclerView.View
     private fun updateThumbnails(item: MoviesSeason) = item.moviesThumbnails
         .share()
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribeBy(item.errors::onNext) {
+        .subscribeBy(item::updateErrors) {
             val adapter = moviesRecyclerView.adapter as MoviesThumbnailsAdapter
             adapter.submitList(it)
         }

@@ -1,4 +1,4 @@
-package com.movies.adapters
+package com.movies.data
 
 import com.movies.core.entities.Movie
 import com.movies.core.entities.MoviesSection

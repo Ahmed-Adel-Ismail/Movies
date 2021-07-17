@@ -25,41 +25,42 @@ interface PresentationPort {
     fun <T> Observable<T>.subscribeCatching(
         onComplete: () -> Unit = {},
         onSuccess: (T) -> Unit
-    ): Disposable = subscribe(onSuccess, ::onError, onComplete)
+    ): Disposable = subscribe(onSuccess, ::updateErrors, onComplete)
 
     @PresentationPorts
     fun <T> Flowable<T>.subscribeCatching(
         onComplete: () -> Unit = {},
         onSuccess: (T) -> Unit
-    ): Disposable = subscribe(onSuccess, ::onError, onComplete)
+    ): Disposable = subscribe(onSuccess, ::updateErrors, onComplete)
 
     @PresentationPorts
     fun <T> Single<T>.subscribeCatching(
         onSuccess: (T) -> Unit
-    ): Disposable = subscribe(onSuccess, ::onError)
+    ): Disposable = subscribe(onSuccess, ::updateErrors)
 
     @PresentationPorts
     fun <T> Maybe<T>.subscribeCatching(
         onComplete: () -> Unit = {},
         onSuccess: (T) -> Unit
-    ): Disposable = subscribe(onSuccess, ::onError, onComplete)
+    ): Disposable = subscribe(onSuccess, ::updateErrors, onComplete)
 
     @PresentationPorts
     fun Completable.subscribeCatching(
         onComplete: () -> Unit,
-    ): Disposable = subscribe(onComplete, ::onError)
+    ): Disposable = subscribe(onComplete, ::updateErrors)
 
-    private fun onError(it: Throwable) {
+    @PresentationPorts
+    fun updateErrors(throwable: Throwable) {
         Tracking.logger.logError(
             this@PresentationPort.javaClass.simpleName,
             "caught exception in errors stream"
         )
         Tracking.logger.logError(
             this@PresentationPort.javaClass.simpleName,
-            it.message ?: it.toString()
+            throwable.message ?: throwable.toString()
         )
-        Tracking.logger.logException(it)
-        errors.onNext(it)
+        Tracking.logger.logException(throwable)
+        errors.onNext(throwable)
     }
 }
 
