@@ -279,7 +279,7 @@ class DetailsBusinessRulesKtTest {
     @Test
     fun `bindDetails() then invoke DetailsDataSource_requestMovieImagesBatch() with valid PaginatedBatch`() {
         DataSources.moviesDetailsDataSource = mock {
-            on { loadSelectedMovie() } doReturn Single.just(MovieDetails(Movie("A")))
+            on { loadSelectedMovie() } doReturn Single.just(MovieDetails(Movie("A"), PaginatedBatch("A")))
             on { requestMovieImagesBatch(anyOrNull()) } doReturn Single.just(PaginatedBatch("B"))
         }
 

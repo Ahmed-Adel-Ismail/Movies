@@ -1,13 +1,13 @@
 package com.movies.data
 
-import com.movies.core.details.MissingMovieTitleException
-import com.movies.core.entities.EMPTY_TEXT
 import com.movies.core.entities.Movie
+import com.movies.core.entities.NoMoreResultsException
 import com.movies.data.flickr.FlickrGateway
 import com.movies.data.flickr.FlickrPicture
 import com.movies.data.flickr.FlickrPicturesMetadata
 import com.movies.data.flickr.FlickrSearchRequest
 import com.movies.data.flickr.FlickrSearchResult
+import com.movies.data.flickr.imageUrl
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -19,12 +19,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 
 class SearchResultDataSourceImplementerTest {
-
-    @Test(expected = MissingMovieTitleException::class)
-    fun `requestImageUrls() with null title then throw MissingMovieTitleException`() {
-        val dataSource = SearchResultDataSourceImplementer(mock(), mock())
-        dataSource.requestImageUrls(Movie()).blockingGet()
-    }
 
     @Test
     fun `requestImageUrls() then invoke requestPictures() with movie title`() {
@@ -48,7 +42,7 @@ class SearchResultDataSourceImplementerTest {
     }
 
     @Test
-    fun `requestImageUrls() with successful response then return imageUrls`() {
+    fun `requestImageUrls() with successful response then return imageUrls in PaginatedBatch`() {
 
         val expectedPictures = listOf(
             FlickrPicture(farm = "1A", server = "1B", id = "1C", secret = "1D"),
@@ -67,23 +61,27 @@ class SearchResultDataSourceImplementerTest {
 
         val result = dataSource.requestImageUrls(Movie("A")).blockingGet()
 
-        assertEquals(expectedPictures.map { it.imageUrl() }, result)
+        assertEquals(expectedPictures.map { it.imageUrl() }, result.items)
     }
 
     @Test
-    fun `requestImageUrls() with null photos response then return list with EMPTY_TEXT`() {
+    fun `requestImageUrls() with null photos response then return NoMoreResultsException in error`() {
         val gateway = mock<FlickrGateway> {
-            onBlocking { requestPictures(any()) } doReturn FlickrSearchResult(null)
+            onBlocking { requestPictures(any()) } doReturn FlickrSearchResult(
+                FlickrPicturesMetadata(
+                    photos = null
+                )
+            )
         }
         val dataSource = SearchResultDataSourceImplementer(mock(), gateway)
 
         val result = dataSource.requestImageUrls(Movie("A")).blockingGet()
 
-        assertEquals(listOf(EMPTY_TEXT), result)
+        assertEquals(NoMoreResultsException, result.error)
     }
 
     @Test
-    fun `requestImageUrls() with empty response then return list with EMPTY_TEXT`() {
+    fun `requestImageUrls() with empty response then return error as NoMoreResultsException`() {
         val gateway = mock<FlickrGateway> {
             onBlocking { requestPictures(any()) } doReturn FlickrSearchResult(
                 FlickrPicturesMetadata(
@@ -95,16 +93,19 @@ class SearchResultDataSourceImplementerTest {
 
         val result = dataSource.requestImageUrls(Movie("A")).blockingGet()
 
-        assertEquals(listOf(EMPTY_TEXT), result)
+        assertEquals(NoMoreResultsException, result.error)
     }
 
-    @Test(expected = UnsupportedOperationException::class)
-    fun `requestImageUrls() with crashing response then propagate error`() {
+    @Test
+    fun `requestImageUrls() with failing response then return error in PaginatedBatch`() {
+        val exception = UnsupportedOperationException()
         val gateway = mock<FlickrGateway> {
-            onBlocking { requestPictures(any()) } doThrow UnsupportedOperationException()
+            onBlocking { requestPictures(any()) } doThrow exception
         }
         val dataSource = SearchResultDataSourceImplementer(mock(), gateway)
 
-        dataSource.requestImageUrls(Movie("A")).blockingGet()
+        val result = dataSource.requestImageUrls(Movie("A")).blockingGet()
+
+        assertEquals(exception, result.error)
     }
 }

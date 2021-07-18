@@ -13,7 +13,7 @@ class MoviesApplication : Application() {
         coreIntegration {
             with moviesMigrationDataSource MigrationDataSourceImplementer(applicationContext)
             with moviesSearchDataSource SearchDataSourceImplementer()
-            with moviesDetailsDataSource DetailsDataSourceImplementer()
+            with moviesDetailsDataSource DetailsDataSourceImplementer(applicationContext)
             with moviesSearchResultsDataSource SearchResultDataSourceImplementer(applicationContext)
             with moviesLogger MoviesLogger
         }

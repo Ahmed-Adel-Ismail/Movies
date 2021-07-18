@@ -1,6 +1,7 @@
 package com.movies.presentation.search.thumbnails
 
 import com.movies.core.entities.Movie
+import com.movies.core.entities.PaginatedBatch
 import com.movies.core.searching.results.ThumbnailsPort
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -12,6 +13,6 @@ class MovieThumbnails(movie: Movie) : ThumbnailsPort {
     override val scheduler = Schedulers.io()
     override val errors = PublishSubject.create<Throwable>()
     override val movie = BehaviorSubject.createDefault(movie)
-    override val loadingThumbnailImageUrls = BehaviorSubject.create<Boolean>()
-    override val thumbnailImageUrls = BehaviorSubject.create<List<String>>()
+    override val loadingPagedItems = BehaviorSubject.create<Boolean>()
+    override val pagedItemsResult = BehaviorSubject.create<PaginatedBatch<String>>()
 }

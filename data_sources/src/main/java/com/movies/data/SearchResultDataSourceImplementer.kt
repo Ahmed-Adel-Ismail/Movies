@@ -1,16 +1,17 @@
 package com.movies.data
 
 import android.content.Context
-import com.movies.core.details.MissingMovieTitleException
-import com.movies.core.entities.EMPTY_TEXT
 import com.movies.core.entities.Movie
+import com.movies.core.entities.NoMoreResultsException
+import com.movies.core.entities.PaginatedBatch
 import com.movies.core.searching.results.SearchResultsDataSource
+import com.movies.data.flickr.FLICKR_DEFAULT_ITEMS_PER_PAGE
+import com.movies.data.flickr.FLICKR_DEFAULT_PAGE
 import com.movies.data.flickr.FlickrGateway
 import com.movies.data.flickr.FlickrGatewayImplementer
-import com.movies.data.flickr.FlickrPicture
 import com.movies.data.flickr.FlickrSearchRequest
+import com.movies.data.flickr.toImagesUrls
 import kotlinx.coroutines.rx2.rxSingle
-import org.jetbrains.annotations.TestOnly
 
 class SearchResultDataSourceImplementer(
     context: Context,
@@ -18,22 +19,25 @@ class SearchResultDataSourceImplementer(
 ) : SearchResultsDataSource {
 
     override fun requestImageUrls(movie: Movie) = rxSingle {
-        FlickrSearchRequest(title(movie))
-            .let { flickrGateway.requestPictures(it) }
-            .metadata
-            ?.photos
-            ?.map { it.imageUrl() }
-            ?.takeUnless { it.isEmpty() }
-            ?: listOf(EMPTY_TEXT)
+        runCatching {
+            val request = FlickrSearchRequest(movie.title)
+            val results = flickrGateway.requestPictures(request).toImagesUrls()
+            if (results.isEmpty()) throw NoMoreResultsException
+            results
+        }.map {
+            PaginatedBatch(
+                key = movie.title,
+                pageNumber = FLICKR_DEFAULT_PAGE,
+                itemsPerPage = FLICKR_DEFAULT_ITEMS_PER_PAGE,
+                items = it
+            )
+        }.getOrElse {
+            PaginatedBatch(
+                key = movie.title,
+                pageNumber = FLICKR_DEFAULT_PAGE,
+                itemsPerPage = FLICKR_DEFAULT_ITEMS_PER_PAGE,
+                error = it
+            )
+        }
     }
 }
-
-private fun title(movie: Movie): String {
-    return movie.title ?: throw MissingMovieTitleException
-}
-
-@TestOnly
-internal fun FlickrPicture.imageUrl() =
-    "http://farm${farm}.static.flickr.com/${server}/${id}_${secret}.jpg"
-
-

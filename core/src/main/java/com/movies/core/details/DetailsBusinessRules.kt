@@ -19,7 +19,7 @@ fun DetailsPort.bindDetails() = withDisposable {
             year.onNext(it.movie.year ?: EMPTY_TEXT)
             genres.onNext(it.movie.genres ?: listOf())
             cast.onNext(it.movie.cast ?: listOf())
-            onLoadMoreImages(PaginatedBatch(it.movie.title, items = it.imagesUrls))
+            onLoadMoreImages(it.imagesUrls)
         }
 }
 

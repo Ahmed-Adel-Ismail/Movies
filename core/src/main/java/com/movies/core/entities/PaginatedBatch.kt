@@ -4,5 +4,8 @@ data class PaginatedBatch<T>(
     val key: String? = null,
     val pageNumber: Int? = null,
     val itemsPerPage: Int? = null,
-    val items: List<T>? = null
+    val items: List<T>? = null,
+    val error: Throwable? = null
 )
+
+object NoMoreResultsException : RuntimeException()

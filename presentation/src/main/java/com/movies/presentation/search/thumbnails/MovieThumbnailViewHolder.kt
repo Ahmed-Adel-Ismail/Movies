@@ -74,7 +74,7 @@ internal class MovieThumbnailViewHolder(parentView: ViewGroup) : RecyclerView.Vi
         }
 
     private fun updateProgress(item: ThumbnailsPort) = item
-        .loadingThumbnailImageUrls
+        .loadingPagedItems
         .share()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeBy(item::updateErrors) {

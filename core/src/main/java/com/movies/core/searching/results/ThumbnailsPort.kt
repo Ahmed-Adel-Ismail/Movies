@@ -1,11 +1,11 @@
 package com.movies.core.searching.results
 
 import com.movies.core.entities.Movie
+import com.movies.core.entities.PaginatedBatch
+import com.movies.core.pagination.PaginationPort
 import com.movies.core.presentation.PresentationPort
 import io.reactivex.subjects.BehaviorSubject
 
-interface ThumbnailsPort : PresentationPort {
+interface ThumbnailsPort : PaginationPort<String> {
     val movie: BehaviorSubject<Movie>
-    val loadingThumbnailImageUrls: BehaviorSubject<Boolean>
-    val thumbnailImageUrls: BehaviorSubject<List<String>>
 }

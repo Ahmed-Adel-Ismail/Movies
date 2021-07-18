@@ -12,7 +12,7 @@ import io.reactivex.functions.Cancellable
 @BusinessRules
 fun ThumbnailsPort.onSelectMovie() {
     DataSources.moviesDetailsDataSource.saveSelectedMovie(
-        MovieDetails(movie.value, thumbnailImageUrls.value)
+        MovieDetails(movie.value, pagedItemsResult.value)
     )
 }
 
@@ -48,25 +48,24 @@ private fun ThumbnailsPort.requestUrlFromDataSource(
     callbackScheduler: Scheduler,
     onUrlReady: (List<String>) -> Unit
 ) = withDisposable {
-    loadingThumbnailImageUrls.onNext(true)
+    loadingPagedItems.onNext(true)
     DataSources.moviesSearchResultsDataSource
         .requestImageUrls(movie)
         .subscribeOn(scheduler)
         .observeOn(scheduler)
-        .doOnError { updateErrors(it) }
-        .onErrorReturn { listOf(EMPTY_TEXT) }
-        .doOnSuccess { thumbnailImageUrls.onNext(it) }
-        .doFinally { loadingThumbnailImageUrls.onNext(false) }
+        .doOnSuccess { it.error?.also(::updateErrors) }
+        .doOnSuccess { pagedItemsResult.onNext(it) }
+        .doFinally { loadingPagedItems.onNext(false) }
         .observeOn(callbackScheduler)
         .subscribeCatching {
-            if (!cancellableOperation.isCancelled) onUrlReady(it)
+            if (!cancellableOperation.isCancelled) onUrlReady(it.items ?: listOf(EMPTY_TEXT))
         }
 }
 
 private fun ThumbnailsPort.useCurrentUrlIfAvailable(onUrlsReady: (List<String>) -> Unit): Boolean {
-    val url = thumbnailImageUrls.value
-    if (url != null) {
-        onUrlsReady(url)
+    val batch = pagedItemsResult.value
+    if (batch?.items != null) {
+        onUrlsReady(batch.items)
         return true
     }
     return false
