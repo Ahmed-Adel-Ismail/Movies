@@ -96,13 +96,34 @@
         tools:text="Action, Documentery, Super Heroes" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/detailsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_margin="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layoutManager="GridLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/movieDetailsCastLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/movieDetailsCastLabel"
+        app:reverseLayout="false"
+        app:spanCount="2"
+        app:stackFromEnd="false"
+        tools:context=".search.MovieDetailsFragment"
+        tools:itemCount="50"
+        tools:listitem="@layout/view_movie_details_thumbnail" />
+
+    <ProgressBar
+        android:id="@+id/detailsProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>

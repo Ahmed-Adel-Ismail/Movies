@@ -1,15 +1,13 @@
 package com.movies.core.details
 
-import com.movies.core.entities.EMPTY_TEXT
 import com.movies.core.entities.Movie
 import com.movies.core.entities.MovieDetails
 import com.movies.core.entities.PaginatedBatch
 import com.movies.core.integration.DataSources
-import com.movies.core.presentation.PresentationAdapter
-import com.movies.core.presentation.PresentationPort
+import com.movies.core.searching.results.ThumbnailsAdapter
+import com.movies.core.searching.results.ThumbnailsPort
 import io.reactivex.Single
 import io.reactivex.schedulers.TestScheduler
-import io.reactivex.subjects.BehaviorSubject
 import org.junit.After
 import org.junit.Test
 import org.mockito.kotlin.anyOrNull
@@ -132,10 +130,10 @@ class DetailsBusinessRulesKtTest {
     }
 
     @Test
-    fun `bindDetails() with null title then throw MissingMovieTitleException`() {
+    fun `bindDetails() with null movie then throw MissingMovieException`() {
         DataSources.moviesDetailsDataSource = mock {
             on { loadSelectedMovie() } doReturn Single.just(
-                MovieDetails(Movie(null, "B", listOf("C"), listOf("D")))
+                MovieDetails()
             )
         }
 
@@ -147,139 +145,35 @@ class DetailsBusinessRulesKtTest {
             .also { adapter.bindDetails() }
             .also { testScheduler.triggerActions() }
             .assertValueCount(1)
-            .assertValueAt(0) { it is MissingMovieTitleException }
+            .assertValueAt(0) { it is MissingMovieException }
     }
 
     @Test
-    fun `bindDetails() then update title`() {
+    fun `bindDetails() with cached PaginatedBatch then update pagedItemsResult`() {
         DataSources.moviesDetailsDataSource = mock {
             on { loadSelectedMovie() } doReturn Single.just(
-                MovieDetails(Movie("A", "B", listOf("C"), listOf("D")))
+                MovieDetails(
+                    Movie("A"),
+                    PaginatedBatch("A")
+                )
             )
+            on { requestMovieImagesBatch(anyOrNull()) } doReturn Single.just(PaginatedBatch("B"))
         }
 
         val testScheduler = TestScheduler()
         val adapter = DetailsAdapter(testScheduler)
 
-        adapter.title
+        adapter.pagedItemsResult
             .test()
             .also { adapter.bindDetails() }
             .also { testScheduler.triggerActions() }
-            .assertValues("A")
+            .assertValues(PaginatedBatch("A"))
     }
 
     @Test
-    fun `bindDetails() then update year`() {
+    fun `bindDetails() with no PaginatedBatch then invoke DetailsDataSource_requestMovieImagesBatch() with initial PaginatedBatch`() {
         DataSources.moviesDetailsDataSource = mock {
-            on { loadSelectedMovie() } doReturn Single.just(
-                MovieDetails(Movie("A", "B", listOf("C"), listOf("D")))
-            )
-        }
-
-        val testScheduler = TestScheduler()
-        val adapter = DetailsAdapter(testScheduler)
-
-        adapter.year
-            .test()
-            .also { adapter.bindDetails() }
-            .also { testScheduler.triggerActions() }
-            .assertValues("B")
-    }
-
-    @Test
-    fun `bindDetails() with null year then update with EMPTY_TEXT`() {
-        DataSources.moviesDetailsDataSource = mock {
-            on { loadSelectedMovie() } doReturn Single.just(
-                MovieDetails(Movie("A", null, listOf("C"), listOf("D")))
-            )
-        }
-
-        val testScheduler = TestScheduler()
-        val adapter = DetailsAdapter(testScheduler)
-
-        adapter.year
-            .test()
-            .also { adapter.bindDetails() }
-            .also { testScheduler.triggerActions() }
-            .assertValues(EMPTY_TEXT)
-    }
-
-    @Test
-    fun `bindDetails() then update genres`() {
-        DataSources.moviesDetailsDataSource = mock {
-            on { loadSelectedMovie() } doReturn Single.just(
-                MovieDetails(Movie("A", "B", listOf("C"), listOf("D")))
-            )
-        }
-
-        val testScheduler = TestScheduler()
-        val adapter = DetailsAdapter(testScheduler)
-
-        adapter.genres
-            .test()
-            .also { adapter.bindDetails() }
-            .also { testScheduler.triggerActions() }
-            .assertValues(listOf("D"))
-    }
-
-    @Test
-    fun `bindDetails() with null genres then update with empty list`() {
-        DataSources.moviesDetailsDataSource = mock {
-            on { loadSelectedMovie() } doReturn Single.just(
-                MovieDetails(Movie("A", "B", listOf("C"), null))
-            )
-        }
-
-        val testScheduler = TestScheduler()
-        val adapter = DetailsAdapter(testScheduler)
-
-        adapter.genres
-            .test()
-            .also { adapter.bindDetails() }
-            .also { testScheduler.triggerActions() }
-            .assertValues(listOf())
-    }
-
-    @Test
-    fun `bindDetails() then update cast`() {
-        DataSources.moviesDetailsDataSource = mock {
-            on { loadSelectedMovie() } doReturn Single.just(
-                MovieDetails(Movie("A", "B", listOf("C"), listOf("D")))
-            )
-        }
-
-        val testScheduler = TestScheduler()
-        val adapter = DetailsAdapter(testScheduler)
-
-        adapter.cast
-            .test()
-            .also { adapter.bindDetails() }
-            .also { testScheduler.triggerActions() }
-            .assertValues(listOf("C"))
-    }
-
-    @Test
-    fun `bindDetails() with null cast then update with empty list`() {
-        DataSources.moviesDetailsDataSource = mock {
-            on { loadSelectedMovie() } doReturn Single.just(
-                MovieDetails(Movie("A", "B", null, listOf("D")))
-            )
-        }
-
-        val testScheduler = TestScheduler()
-        val adapter = DetailsAdapter(testScheduler)
-
-        adapter.cast
-            .test()
-            .also { adapter.bindDetails() }
-            .also { testScheduler.triggerActions() }
-            .assertValues(listOf())
-    }
-
-    @Test
-    fun `bindDetails() then invoke DetailsDataSource_requestMovieImagesBatch() with valid PaginatedBatch`() {
-        DataSources.moviesDetailsDataSource = mock {
-            on { loadSelectedMovie() } doReturn Single.just(MovieDetails(Movie("A"), PaginatedBatch("A")))
+            on { loadSelectedMovie() } doReturn Single.just(MovieDetails(Movie("A")))
             on { requestMovieImagesBatch(anyOrNull()) } doReturn Single.just(PaginatedBatch("B"))
         }
 
@@ -300,13 +194,6 @@ class DetailsBusinessRulesKtTest {
 }
 
 class DetailsAdapter(testScheduler: TestScheduler) : DetailsPort,
-    PresentationPort by PresentationAdapter(testScheduler) {
-
-    override val title = BehaviorSubject.create<String>()
-    override val year = BehaviorSubject.create<String>()
-    override val genres = BehaviorSubject.create<List<String>>()
-    override val cast = BehaviorSubject.create<List<String>>()
-    override val pagedItemsResult = BehaviorSubject.create<PaginatedBatch<String>>()
-    override val loadingPagedItems = BehaviorSubject.create<Boolean>()
+    ThumbnailsPort by ThumbnailsAdapter(testScheduler) {
     override val bindDetails = Unit
 }

@@ -1,6 +1,7 @@
 package com.movies.core.pagination
 
 import com.movies.core.entities.BusinessRules
+import com.movies.core.entities.NoMoreResultsException
 import com.movies.core.entities.PaginatedBatch
 import com.movies.core.presentation.withDisposable
 import io.reactivex.Single
@@ -26,3 +27,17 @@ private fun <T> PaginationPort<T>.detectBatch(newBatch: PaginatedBatch<T>?) =
     } else {
         pagedItemsResult.value
     }
+
+@BusinessRules
+operator fun <T> PaginatedBatch<T>.plus(items: List<T>?): PaginatedBatch<T> {
+    return if (items == null || items.isEmpty()) plus(NoMoreResultsException)
+    else copy(
+        pageNumber = this.pageNumber?.plus(1) ?: 1,
+        items = ArrayList(this.items ?: listOf()).apply { addAll(items) }
+    )
+}
+
+@BusinessRules
+operator fun <T> PaginatedBatch<T>.plus(error: Throwable): PaginatedBatch<T> = copy(
+    error = error
+)

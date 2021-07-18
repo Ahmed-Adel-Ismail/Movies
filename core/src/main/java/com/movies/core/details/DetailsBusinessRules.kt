@@ -1,7 +1,6 @@
 package com.movies.core.details
 
 import com.movies.core.entities.BusinessRules
-import com.movies.core.entities.EMPTY_TEXT
 import com.movies.core.entities.PaginatedBatch
 import com.movies.core.integration.DataSources
 import com.movies.core.pagination.onFetchPagedItems
@@ -12,14 +11,12 @@ import io.reactivex.Single
 fun DetailsPort.bindDetails() = withDisposable {
     DataSources.moviesDetailsDataSource.loadSelectedMovie()
         .filter { it.movie?.title != null }
-        .switchIfEmpty(Single.error(MissingMovieTitleException))
+        .switchIfEmpty(Single.error(MissingMovieException))
         .subscribeCatching {
             if (it.movie == null) throw MissingMovieException
-            title.onNext(it.movie.title ?: EMPTY_TEXT)
-            year.onNext(it.movie.year ?: EMPTY_TEXT)
-            genres.onNext(it.movie.genres ?: listOf())
-            cast.onNext(it.movie.cast ?: listOf())
-            onLoadMoreImages(it.imagesUrls)
+            movie.onNext(it.movie)
+            if (it.imagesUrls != null) pagedItemsResult.onNext(it.imagesUrls)
+            else onLoadMoreImages(PaginatedBatch(it.movie.title))
         }
 }
 

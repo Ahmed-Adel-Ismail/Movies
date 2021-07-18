@@ -9,8 +9,8 @@ interface FlickrApiService {
     suspend fun requestPictures(
         @Query("api_key") apiKey: String,
         @Query("text") title: String,
-        @Query("page") page: Int,
-        @Query("per_page") itemsPerPage: Int
+        @Query("page") page: Int?,
+        @Query("per_page") itemsPerPage: Int?
     ): FlickrSearchResult
 }
 

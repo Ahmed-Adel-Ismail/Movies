@@ -2,6 +2,9 @@ package com.movies.data
 
 import com.movies.core.entities.Movie
 import com.movies.core.entities.NoMoreResultsException
+import com.movies.core.entities.PaginatedBatch
+import com.movies.data.flickr.FLICKR_DEFAULT_ITEMS_PER_PAGE
+import com.movies.data.flickr.FLICKR_DEFAULT_PAGE
 import com.movies.data.flickr.FlickrGateway
 import com.movies.data.flickr.FlickrPicture
 import com.movies.data.flickr.FlickrPicturesMetadata
@@ -38,6 +41,27 @@ class SearchResultDataSourceImplementerTest {
             }
 
             assertEquals("A", argumentCapture.firstValue.title)
+        }
+    }
+
+    @Test
+    fun `requestImageUrls() then invoke requestPictures() with FLICKR_DEFAULT_PAGE`() {
+        runBlocking {
+
+            val gateway = mock<FlickrGateway> {
+                onBlocking { requestPictures(any()) } doReturn FlickrSearchResult(
+                    FlickrPicturesMetadata(photos = listOf())
+                )
+            }
+            val dataSource = SearchResultDataSourceImplementer(mock(), gateway)
+
+            dataSource.requestImageUrls(Movie("A")).blockingGet()
+
+            val argumentCapture = argumentCaptor<FlickrSearchRequest> {
+                verify(gateway).requestPictures(capture())
+            }
+
+            assertEquals(FLICKR_DEFAULT_PAGE, argumentCapture.firstValue.page)
         }
     }
 
@@ -107,5 +131,19 @@ class SearchResultDataSourceImplementerTest {
         val result = dataSource.requestImageUrls(Movie("A")).blockingGet()
 
         assertEquals(exception, result.error)
+    }
+
+    @Test
+    fun `initialPaginatedBatch() then return PaginatedBatch with default pagination values`() {
+
+        val expected = PaginatedBatch<String>(
+            key = "A",
+            pageNumber = FLICKR_DEFAULT_PAGE,
+            itemsPerPage = FLICKR_DEFAULT_ITEMS_PER_PAGE
+        )
+
+        val result = initialPaginatedBatch("A")
+
+        assertEquals(expected, result)
     }
 }

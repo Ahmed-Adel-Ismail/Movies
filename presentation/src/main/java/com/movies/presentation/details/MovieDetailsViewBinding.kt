@@ -1,80 +1,70 @@
 package com.movies.presentation.details
 
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.movies.presentation.R
 import com.movies.presentation.subscribeWithLifecycle
 
 internal fun MovieDetailsFragment.bindViews(view: View) {
-    bindTitle()
-    bindYear(view)
-    bindGenres(view)
-    bindCast(view)
+    bindRecyclerView(view)
+    bindProgress(view)
+    bindMovieDetails(view)
 }
 
-private fun MovieDetailsFragment.bindTitle() {
-    viewModel.title.subscribeWithLifecycle(this) {
-        activity?.title = it
+private fun MovieDetailsFragment.bindRecyclerView(view: View) {
+    val adapter = MovieDetailsThumbnailsAdapter()
+    val recycler = view.findViewById<RecyclerView>(R.id.detailsRecyclerView)
+    recycler.adapter = adapter
+    viewModel.pagedItemsResult.subscribeWithLifecycle(this) {
+        if (it.error == null) adapter.submitList(it.items ?: listOf())
     }
 }
 
-private fun MovieDetailsFragment.bindYear(view: View) {
+private fun MovieDetailsFragment.bindProgress(view: View) {
+    val progress = view.findViewById<View>(R.id.detailsProgressBar)
+    viewModel.loadingPagedItems.subscribeWithLifecycle(this) {
+        progress.visibility = if (it) VISIBLE else GONE
+    }
+}
+
+private fun MovieDetailsFragment.bindMovieDetails(view: View) {
     val year = view.findViewById<TextView>(R.id.movieDetailsYear)
-    viewModel.year.subscribeWithLifecycle(this) {
-        year.text = it
-    }
-}
 
-private fun MovieDetailsFragment.bindCast(view: View) {
     val cast = view.findViewById<TextView>(R.id.movieDetailsCast)
     val castLabel = view.findViewById<TextView>(R.id.movieDetailsCastLabel)
-    viewModel.cast.subscribeWithLifecycle(this) {
-        if (it.isNotEmpty()) {
-            showCast(cast, castLabel, it)
-        } else {
-            hideCast(cast, castLabel)
-        }
-    }
-}
 
-private fun hideCast(cast: TextView, castLabel: TextView) {
-    cast.visibility = View.GONE
-    castLabel.visibility = View.GONE
-}
-
-private fun showCast(
-    cast: TextView,
-    castLabel: TextView,
-    it: List<String>
-) {
-    cast.visibility = View.VISIBLE
-    castLabel.visibility = View.VISIBLE
-    cast.text = it.joinToString()
-}
-
-private fun MovieDetailsFragment.bindGenres(view: View) {
     val genres = view.findViewById<TextView>(R.id.movieDetailsGenres)
     val genresLabel = view.findViewById<TextView>(R.id.movieDetailsGenresLabel)
-    viewModel.genres.subscribeWithLifecycle(this) {
-        if (it.isNotEmpty()) {
-            showGenres(genres, genresLabel, it)
-        } else {
-            hideGenres(genres, genresLabel)
-        }
+
+    viewModel.movie.subscribeWithLifecycle(this) {
+
+        activity?.title = it.title
+
+        year.text = it.year
+
+        if (it.cast?.isNotEmpty() == true) show(cast, castLabel, it.cast)
+        else hide(cast, castLabel)
+
+        if (it.genres?.isNotEmpty() == true) show(genres, genresLabel, it.genres)
+        else hide(genres, genresLabel)
+
     }
 }
 
-private fun hideGenres(genres: TextView, genresLabel: TextView) {
-    genres.visibility = View.GONE
-    genresLabel.visibility = View.GONE
+private fun hide(textView: TextView, labelsView: TextView) {
+    textView.visibility = View.GONE
+    labelsView.visibility = View.GONE
 }
 
-private fun showGenres(
-    genres: TextView,
-    genresLabel: TextView,
-    it: List<String>
+private fun show(
+    textView: TextView,
+    labelView: TextView,
+    values: List<String>?
 ) {
-    genres.visibility = View.VISIBLE
-    genresLabel.visibility = View.VISIBLE
-    genres.text = it.joinToString()
+    textView.visibility = View.VISIBLE
+    labelView.visibility = View.VISIBLE
+    textView.text = values?.joinToString()
 }

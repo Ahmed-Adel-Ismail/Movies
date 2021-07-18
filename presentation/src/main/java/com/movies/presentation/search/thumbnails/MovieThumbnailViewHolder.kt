@@ -71,6 +71,7 @@ internal class MovieThumbnailViewHolder(parentView: ViewGroup) : RecyclerView.Vi
                 .fitCenter()
                 .into(image)
                 .clearOnDetach()
+
         }
 
     private fun updateProgress(item: ThumbnailsPort) = item

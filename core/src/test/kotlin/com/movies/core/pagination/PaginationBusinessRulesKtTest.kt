@@ -1,5 +1,6 @@
 package com.movies.core.pagination
 
+import com.movies.core.entities.NoMoreResultsException
 import com.movies.core.entities.PaginatedBatch
 import com.movies.core.presentation.PresentationAdapter
 import com.movies.core.presentation.PresentationPort
@@ -106,6 +107,85 @@ class PaginationBusinessRulesKtTest {
             .also { testScheduler.triggerActions() }
             .assertValueCount(1)
             .assertValueAt(0) { it is Exception }
+    }
+
+    @Test
+    fun `plus(Throwable) then return throwable in PaginatedBatch_error`() {
+        val exception = UnsupportedOperationException()
+        val value = PaginatedBatch<Int>()
+        val result = value + exception
+        assertEquals(exception, result.error)
+    }
+
+    @Test
+    fun `plus(Throwable) then never update PaginatedBatch_pageNumber`() {
+        val value = PaginatedBatch<Int>(pageNumber = 1)
+        val result = value + UnsupportedOperationException()
+        assertEquals(1, result.pageNumber)
+    }
+
+    @Test
+    fun `plus(List) with null list then return NoMoreResultsException in PaginatedBatch_error`() {
+        val items: List<Int>? = null
+        val value = PaginatedBatch<Int>()
+        val result = value + items
+        assertEquals(NoMoreResultsException, result.error)
+    }
+
+    @Test
+    fun `plus(List) with null list then never update PaginatedBatch_pageNumber`() {
+        val items: List<Int>? = null
+        val value = PaginatedBatch<Int>(pageNumber = 1)
+        val result = value + items
+        assertEquals(1, result.pageNumber)
+    }
+
+    @Test
+    fun `plus(List) with empty list then return NoMoreResultsException in PaginatedBatch_error`() {
+        val items: List<Int> = listOf()
+        val value = PaginatedBatch<Int>()
+        val result = value + items
+        assertEquals(NoMoreResultsException, result.error)
+    }
+
+    @Test
+    fun `plus(List) with empty list then never update PaginatedBatch_pageNumber`() {
+        val items: List<Int> = listOf()
+        val value = PaginatedBatch<Int>(pageNumber = 1)
+        val result = value + items
+        assertEquals(1, result.pageNumber)
+    }
+
+    @Test
+    fun `plus(List) with null PaginatedBatch_pageNumber then return PaginatedBatch_pageNumber as 1`() {
+        val items: List<Int> = listOf(1)
+        val value = PaginatedBatch<Int>(pageNumber = null)
+        val result = value + items
+        assertEquals(1, result.pageNumber)
+    }
+
+    @Test
+    fun `plus(List) with then increment PaginatedBatch_pageNumber`() {
+        val items: List<Int> = listOf(1)
+        val value = PaginatedBatch<Int>(pageNumber = 1)
+        val result = value + items
+        assertEquals(2, result.pageNumber)
+    }
+
+    @Test
+    fun `plus(List) with existing items then append new items to PaginatedBatch_items`() {
+        val items: List<Int> = listOf(1)
+        val value = PaginatedBatch(items = listOf(1))
+        val result = value + items
+        assertEquals(listOf(1, 1), result.items)
+    }
+
+    @Test
+    fun `plus(List) with null items then put new items in PaginatedBatch_items`() {
+        val items: List<Int> = listOf(1)
+        val value = PaginatedBatch<Int>(items = null)
+        val result = value + items
+        assertEquals(listOf(1), result.items)
     }
 }
 
