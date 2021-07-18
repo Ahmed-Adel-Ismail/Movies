@@ -4,7 +4,10 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.TextView
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
+import com.movies.core.details.onLoadMoreImages
 import com.movies.presentation.R
 import com.movies.presentation.subscribeWithLifecycle
 
@@ -18,10 +21,32 @@ private fun MovieDetailsFragment.bindRecyclerView(view: View) {
     val adapter = MovieDetailsThumbnailsAdapter()
     val recycler = view.findViewById<RecyclerView>(R.id.detailsRecyclerView)
     recycler.adapter = adapter
+    recycler.addOnScrollListener(onScrollListener(recycler))
     viewModel.pagedItemsResult.subscribeWithLifecycle(this) {
         if (it.error == null) adapter.submitList(it.items ?: listOf())
     }
 }
+
+private fun MovieDetailsFragment.onScrollListener(recycler: RecyclerView) =
+    object : OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, directionX: Int, directionY: Int) {
+            if (directionY <= 0) return
+            val layoutManager = recycler.layoutManager as? GridLayoutManager ?: return
+            val visibleItemCount = layoutManager.childCount
+            val totalItemCount = layoutManager.itemCount
+            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+            if (isLoadingRequired(visibleItemCount, firstVisibleItemPosition, totalItemCount)) {
+                viewModel.onLoadMoreImages()
+            }
+        }
+    }
+
+private fun isLoadingRequired(
+    visibleItemCount: Int,
+    firstVisibleItemPosition: Int,
+    totalItemCount: Int
+) = firstVisibleItemPosition >= 0 &&
+    ((visibleItemCount + firstVisibleItemPosition) >= (totalItemCount - 10))
 
 private fun MovieDetailsFragment.bindProgress(view: View) {
     val progress = view.findViewById<View>(R.id.detailsProgressBar)

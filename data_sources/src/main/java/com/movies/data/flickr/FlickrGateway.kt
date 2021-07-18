@@ -4,7 +4,7 @@ import com.movies.core.details.MissingMovieTitleException
 import com.movies.core.entities.NoMoreResultsException
 
 internal const val FLICKR_DEFAULT_PAGE = 1
-internal const val FLICKR_DEFAULT_ITEMS_PER_PAGE = 100
+internal const val FLICKR_DEFAULT_ITEMS_PER_PAGE = 50
 
 interface FlickrGateway {
 
