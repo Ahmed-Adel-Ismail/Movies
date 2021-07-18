@@ -38,7 +38,7 @@ class ThumbnailsBusinessRulesKtTest {
     }
 
     @Test
-    fun `onRequestImageUrl() with existing url then invoke callback `() {
+    fun `onRequestInitialImagesUrls() with existing url then invoke callback `() {
 
         val testScheduler = TestScheduler()
         val adapter = ThumbnailsAdapter(testScheduler)
@@ -46,7 +46,7 @@ class ThumbnailsBusinessRulesKtTest {
         adapter.pagedItemsResult.onNext(PaginatedBatch(items = listOf("A")))
 
         var result: List<String>? = null
-        adapter.onRequestImageUrl(testScheduler) {
+        adapter.onRequestInitialImagesUrls(testScheduler) {
             result = it
         }
         testScheduler.triggerActions()
@@ -55,7 +55,7 @@ class ThumbnailsBusinessRulesKtTest {
     }
 
     @Test
-    fun `onRequestImageUrl() with existing url then never invoke SearchResultsDataSource_requestImageUrl()`() {
+    fun `onRequestInitialImagesUrls() with existing url then never invoke SearchResultsDataSource_requestImageUrl()`() {
 
         DataSources.moviesSearchResultsDataSource = mock()
 
@@ -64,7 +64,7 @@ class ThumbnailsBusinessRulesKtTest {
 
         adapter.pagedItemsResult.onNext(PaginatedBatch(items = listOf("A")))
 
-        adapter.onRequestImageUrl(testScheduler) {
+        adapter.onRequestInitialImagesUrls(testScheduler) {
             // do nothing
         }
         testScheduler.triggerActions()
@@ -73,25 +73,25 @@ class ThumbnailsBusinessRulesKtTest {
     }
 
     @Test
-    fun `onRequestImageUrl() with existing url then never update loadingPagedItems`() {
+    fun `onRequestInitialImagesUrls() with existing url then never update loadingPagedItems`() {
         val testScheduler = TestScheduler()
         val adapter = ThumbnailsAdapter(testScheduler)
 
         adapter.pagedItemsResult.onNext(PaginatedBatch(items = listOf("A")))
         adapter.loadingPagedItems
             .test()
-            .also { adapter.onRequestImageUrl(testScheduler) {} }
+            .also { adapter.onRequestInitialImagesUrls(testScheduler) {} }
             .also { testScheduler.triggerActions() }
             .assertNoValues()
     }
 
     @Test
-    fun `onRequestImageUrl() with no movie then invoke callback with EMPTY_TEXT `() {
+    fun `onRequestInitialImagesUrls() with no movie then invoke callback with EMPTY_TEXT `() {
         val testScheduler = TestScheduler()
         val adapter = ThumbnailsAdapter(testScheduler)
 
         var result: List<String>? = null
-        adapter.onRequestImageUrl(testScheduler) {
+        adapter.onRequestInitialImagesUrls(testScheduler) {
             result = it
         }
         testScheduler.triggerActions()
@@ -100,13 +100,13 @@ class ThumbnailsBusinessRulesKtTest {
     }
 
     @Test
-    fun `onRequestImageUrl() with no movie then never invoke SearchResultsDataSource_requestImageUrl()`() {
+    fun `onRequestInitialImagesUrls() with no movie then never invoke SearchResultsDataSource_requestImageUrl()`() {
         DataSources.moviesSearchResultsDataSource = mock()
 
         val testScheduler = TestScheduler()
         val adapter = ThumbnailsAdapter(testScheduler)
 
-        adapter.onRequestImageUrl(testScheduler) {
+        adapter.onRequestInitialImagesUrls(testScheduler) {
             // do nothing
         }
         testScheduler.triggerActions()
@@ -115,19 +115,19 @@ class ThumbnailsBusinessRulesKtTest {
     }
 
     @Test
-    fun `onRequestImageUrl() with no movie then never update loadingPagedItems`() {
+    fun `onRequestInitialImagesUrls() with no movie then never update loadingPagedItems`() {
         val testScheduler = TestScheduler()
         val adapter = ThumbnailsAdapter(testScheduler)
 
         adapter.loadingPagedItems
             .test()
-            .also { adapter.onRequestImageUrl(testScheduler) {} }
+            .also { adapter.onRequestInitialImagesUrls(testScheduler) {} }
             .also { testScheduler.triggerActions() }
             .assertNoValues()
     }
 
     @Test
-    fun `onRequestImageUrl() then update loadingPagedItems with true `() {
+    fun `onRequestInitialImagesUrls() then update loadingPagedItems with true `() {
 
         DataSources.moviesSearchResultsDataSource = mock {
             on { requestImageUrls(any()) } doReturn Single.just(PaginatedBatch(items = listOf("URL")))
@@ -139,13 +139,13 @@ class ThumbnailsBusinessRulesKtTest {
         adapter.movie.onNext(Movie("A"))
         adapter.loadingPagedItems
             .test()
-            .also { adapter.onRequestImageUrl(testScheduler) {} }
+            .also { adapter.onRequestInitialImagesUrls(testScheduler) {} }
             .also { testScheduler.triggerActions() }
             .assertValueAt(0, true)
     }
 
     @Test
-    fun `onRequestImageUrl() then invoke SearchResultsDataSource_requestImageUrl()`() {
+    fun `onRequestInitialImagesUrls() then invoke SearchResultsDataSource_requestImageUrl()`() {
         DataSources.moviesSearchResultsDataSource = mock {
             on { requestImageUrls(any()) } doReturn Single.just(PaginatedBatch(items = listOf("URL")))
         }
@@ -154,14 +154,14 @@ class ThumbnailsBusinessRulesKtTest {
         val adapter = ThumbnailsAdapter(testScheduler)
 
         adapter.movie.onNext(Movie("A"))
-        adapter.onRequestImageUrl(testScheduler) {}
+        adapter.onRequestInitialImagesUrls(testScheduler) {}
         testScheduler.triggerActions()
 
         verify(DataSources.moviesSearchResultsDataSource).requestImageUrls(any())
     }
 
     @Test
-    fun `onRequestImageUrl() then update pagedItemsResult with result`() {
+    fun `onRequestInitialImagesUrls() then update pagedItemsResult with result`() {
         DataSources.moviesSearchResultsDataSource = mock {
             on { requestImageUrls(any()) } doReturn Single.just(PaginatedBatch(items = listOf("URL")))
         }
@@ -172,13 +172,13 @@ class ThumbnailsBusinessRulesKtTest {
         adapter.movie.onNext(Movie("A"))
         adapter.pagedItemsResult
             .test()
-            .also { adapter.onRequestImageUrl(testScheduler) {} }
+            .also { adapter.onRequestInitialImagesUrls(testScheduler) {} }
             .also { testScheduler.triggerActions() }
             .assertValues(PaginatedBatch(items = listOf("URL")))
     }
 
     @Test
-    fun `onRequestImageUrl() then update callback with result`() {
+    fun `onRequestInitialImagesUrls() then update callback with result`() {
         DataSources.moviesSearchResultsDataSource = mock {
             on { requestImageUrls(any()) } doReturn Single.just(PaginatedBatch(items = listOf("URL")))
         }
@@ -189,7 +189,7 @@ class ThumbnailsBusinessRulesKtTest {
         adapter.movie.onNext(Movie("A"))
 
         var result: List<String>? = null
-        adapter.onRequestImageUrl(testScheduler) {
+        adapter.onRequestInitialImagesUrls(testScheduler) {
             result = it
         }
         testScheduler.triggerActions()
@@ -198,7 +198,7 @@ class ThumbnailsBusinessRulesKtTest {
     }
 
     @Test
-    fun `onRequestImageUrl() with cancelled operation then never update callback`() {
+    fun `onRequestInitialImagesUrls() with cancelled operation then never update callback`() {
         DataSources.moviesSearchResultsDataSource = mock {
             on { requestImageUrls(any()) } doReturn Single.just(PaginatedBatch(items = listOf("URL")))
         }
@@ -209,7 +209,7 @@ class ThumbnailsBusinessRulesKtTest {
         adapter.movie.onNext(Movie("A"))
 
         var result: List<String>? = null
-        val cancellable = adapter.onRequestImageUrl(testScheduler) {
+        val cancellable = adapter.onRequestInitialImagesUrls(testScheduler) {
             result = it
         }
         cancellable.cancel()
@@ -219,7 +219,7 @@ class ThumbnailsBusinessRulesKtTest {
     }
 
     @Test
-    fun `onRequestImageUrl() then update loadingPagedItems with false`() {
+    fun `onRequestInitialImagesUrls() then update loadingPagedItems with false`() {
         DataSources.moviesSearchResultsDataSource = mock {
             on { requestImageUrls(any()) } doReturn Single.just(PaginatedBatch(items = listOf("URL")))
         }
@@ -230,13 +230,13 @@ class ThumbnailsBusinessRulesKtTest {
         adapter.movie.onNext(Movie("A"))
         adapter.loadingPagedItems
             .test()
-            .also { adapter.onRequestImageUrl(testScheduler) {} }
+            .also { adapter.onRequestInitialImagesUrls(testScheduler) {} }
             .also { testScheduler.triggerActions() }
             .assertValueAt(1, false)
     }
 
     @Test
-    fun `onRequestImageUrl() with error then update pagedItemsResult_error with exception`() {
+    fun `onRequestInitialImagesUrls() with error then update pagedItemsResult_error with exception`() {
         DataSources.moviesSearchResultsDataSource = mock {
             on { requestImageUrls(any()) } doReturn Single.just(
                 PaginatedBatch(error = UnsupportedOperationException())
@@ -249,14 +249,14 @@ class ThumbnailsBusinessRulesKtTest {
         adapter.movie.onNext(Movie("A"))
         adapter.pagedItemsResult
             .test()
-            .also { adapter.onRequestImageUrl(testScheduler) {} }
+            .also { adapter.onRequestInitialImagesUrls(testScheduler) {} }
             .also { testScheduler.triggerActions() }
             .assertValueCount(1)
             .assertValueAt(0) { it.error is UnsupportedOperationException }
     }
 
     @Test
-    fun `onRequestImageUrl() with error then invoke callback with EMPTY_TEXT`() {
+    fun `onRequestInitialImagesUrls() with error then invoke callback with EMPTY_TEXT`() {
         DataSources.moviesSearchResultsDataSource = mock {
             on { requestImageUrls(any()) } doReturn Single.just(
                 PaginatedBatch(error = UnsupportedOperationException())
@@ -269,7 +269,7 @@ class ThumbnailsBusinessRulesKtTest {
         adapter.movie.onNext(Movie("A"))
 
         var result: List<String>? = null
-        adapter.onRequestImageUrl(testScheduler) {
+        adapter.onRequestInitialImagesUrls(testScheduler) {
             result = it
         }
         testScheduler.triggerActions()
@@ -278,7 +278,7 @@ class ThumbnailsBusinessRulesKtTest {
     }
 
     @Test
-    fun `onRequestImageUrl() with error then update loadingPagedItems with false`() {
+    fun `onRequestInitialImagesUrls() with error then update loadingPagedItems with false`() {
         DataSources.moviesSearchResultsDataSource = mock {
             on { requestImageUrls(any()) } doReturn Single.error(UnsupportedOperationException())
         }
@@ -289,7 +289,7 @@ class ThumbnailsBusinessRulesKtTest {
         adapter.movie.onNext(Movie("A"))
         adapter.loadingPagedItems
             .test()
-            .also { adapter.onRequestImageUrl(testScheduler) {} }
+            .also { adapter.onRequestInitialImagesUrls(testScheduler) {} }
             .also { testScheduler.triggerActions() }
             .assertValueAt(1, false)
     }

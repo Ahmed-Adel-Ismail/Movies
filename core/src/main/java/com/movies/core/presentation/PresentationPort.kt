@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package com.movies.core.presentation
 
 import com.movies.core.integration.Tracking
@@ -51,14 +49,8 @@ interface PresentationPort {
 
     @PresentationPorts
     fun updateErrors(throwable: Throwable) {
-        Tracking.logger.logError(
-            this@PresentationPort.javaClass.simpleName,
-            "caught exception in errors stream"
-        )
-        Tracking.logger.logError(
-            this@PresentationPort.javaClass.simpleName,
-            throwable.message ?: throwable.toString()
-        )
+        Tracking.logger.logError(javaClass.simpleName, "exception in errors stream")
+        Tracking.logger.logError(javaClass.simpleName, throwable.message ?: throwable.toString())
         Tracking.logger.logException(throwable)
         errors.onNext(throwable)
     }

@@ -70,26 +70,26 @@ private fun MovieDetailsFragment.bindMovieDetails(view: View) {
 
         year.text = it.year
 
-        if (it.cast?.isNotEmpty() == true) show(cast, castLabel, it.cast)
+        if (it.cast?.isNotEmpty() == true) showAsCommaSeparated(cast, castLabel, it.cast)
         else hide(cast, castLabel)
 
-        if (it.genres?.isNotEmpty() == true) show(genres, genresLabel, it.genres)
+        if (it.genres?.isNotEmpty() == true) showAsCommaSeparated(genres, genresLabel, it.genres)
         else hide(genres, genresLabel)
 
     }
 }
 
 private fun hide(textView: TextView, labelsView: TextView) {
-    textView.visibility = View.GONE
-    labelsView.visibility = View.GONE
+    textView.visibility = GONE
+    labelsView.visibility = GONE
 }
 
-private fun show(
+private fun showAsCommaSeparated(
     textView: TextView,
     labelView: TextView,
     values: List<String>?
 ) {
-    textView.visibility = View.VISIBLE
-    labelView.visibility = View.VISIBLE
+    textView.visibility = VISIBLE
+    labelView.visibility = VISIBLE
     textView.text = values?.joinToString()
 }

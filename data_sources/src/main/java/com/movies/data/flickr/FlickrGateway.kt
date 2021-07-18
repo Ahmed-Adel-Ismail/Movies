@@ -1,7 +1,7 @@
 package com.movies.data.flickr
 
-import com.movies.core.details.MissingMovieTitleException
 import com.movies.core.entities.NoMoreResultsException
+import org.jetbrains.annotations.TestOnly
 
 internal const val FLICKR_DEFAULT_PAGE = 1
 internal const val FLICKR_DEFAULT_ITEMS_PER_PAGE = 50
@@ -30,3 +30,17 @@ internal suspend fun FlickrGateway.requestPaginatedBatch(
     if (results.isEmpty()) throw NoMoreResultsException
     return results
 }
+
+@TestOnly
+internal fun FlickrSearchResult?.toImagesUrls() = this
+    ?.metadata
+    ?.photos
+    ?.map { it.imageUrl() }
+    ?.takeUnless { it.isEmpty() }
+    ?: listOf()
+
+@TestOnly
+internal fun FlickrPicture.imageUrl() =
+    "http://farm${farm}.static.flickr.com/${server}/${id}_${secret}.jpg"
+
+object MissingMovieTitleException : RuntimeException()

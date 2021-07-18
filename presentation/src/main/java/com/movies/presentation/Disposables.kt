@@ -8,6 +8,10 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 
+@DslMarker
+private annotation class Disposables
+
+@Disposables
 fun <T> Observable<T>.subscribeWithLifecycle(
     lifecycleOwner: LifecycleOwner,
     releaseOnLifecycleEvent: Lifecycle.Event = Lifecycle.Event.ON_DESTROY,

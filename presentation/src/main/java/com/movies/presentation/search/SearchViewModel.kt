@@ -32,14 +32,16 @@ class SearchViewModel : ViewModel(), SearchSeasonsPort {
     }
 
     override fun onCleared() {
-        searchResults.share().subscribeCatching { seasons ->
-            seasons.forEach { it.onCleared() }
-        }
+        searchResults.share().subscribeCatching { seasons -> clearSeasons(seasons) }
         dispose()
+    }
+
+    private fun clearSeasons(seasons: List<MoviesSeason>) {
+        seasons.forEach { it.onCleared() }
     }
 }
 
-fun SearchSeasonsPort.bindSearchResults() = withDisposable {
+internal fun SearchSeasonsPort.bindSearchResults() = withDisposable {
     pagedItemsResult.share().observeOn(scheduler).subscribeCatching { batch ->
         searchResults.onNext(batch.items?.map { MoviesSeason(it) } ?: listOf())
     }

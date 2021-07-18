@@ -23,10 +23,12 @@ class MoviesSeason(section: MoviesSection) : ViewModel(), SeasonPort<MovieThumbn
     }
 
     public override fun onCleared() {
-        moviesThumbnails.share().subscribeCatching { thumbnails ->
-            thumbnails.forEach { it.dispose() }
-        }
+        moviesThumbnails.share().subscribeCatching { thumbnails -> clearThumbnails(thumbnails) }
         dispose()
+    }
+
+    private fun clearThumbnails(thumbnails: List<MovieThumbnails>) {
+        thumbnails.forEach { it.dispose() }
     }
 }
 

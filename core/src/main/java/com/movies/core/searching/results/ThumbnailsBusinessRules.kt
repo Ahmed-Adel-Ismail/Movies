@@ -17,7 +17,7 @@ fun ThumbnailsPort.onSelectMovie() {
 }
 
 @BusinessRules
-fun ThumbnailsPort.onRequestImageUrl(
+fun ThumbnailsPort.onRequestInitialImagesUrls(
     callbackSchedulers: Scheduler,
     onUrlsReady: (List<String>) -> Unit
 ): Cancellable {

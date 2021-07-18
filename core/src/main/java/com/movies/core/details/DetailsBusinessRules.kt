@@ -25,5 +25,5 @@ fun DetailsPort.onLoadMoreImages(batch: PaginatedBatch<String>? = null) = onFetc
     DataSources.moviesDetailsDataSource.requestMovieImagesBatch(it)
 }
 
-object MissingMovieTitleException : RuntimeException()
+
 object MissingMovieException : RuntimeException()

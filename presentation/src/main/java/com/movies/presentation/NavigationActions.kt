@@ -26,10 +26,17 @@ fun Context.navigate(action: String) {
 @NavigationDsl
 fun AppCompatActivity.withNavigation(onNavigationAction: (String?) -> Unit) {
     val navigator = navigatorReceiver(onNavigationAction)
+    lifecycle.addObserver(navigationReceiverObserver(navigator))
+}
 
-    lifecycle.addObserver(object : LifecycleObserver {
+private fun AppCompatActivity.navigationReceiverObserver(navigator: BroadcastReceiver) =
+    object : LifecycleObserver {
         @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
         fun onCreate() {
+            registerReceiver()
+        }
+
+        private fun registerReceiver() {
             runCatching {
                 registerReceiver(navigator, IntentFilter(ACTION_NAVIGATE))
             }.onFailure {
@@ -39,14 +46,17 @@ fun AppCompatActivity.withNavigation(onNavigationAction: (String?) -> Unit) {
 
         @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         fun onDestroy() {
+            unregisterReceiver()
+        }
+
+        private fun unregisterReceiver() {
             runCatching {
                 unregisterReceiver(navigator)
             }.onFailure {
                 Tracking.logger.logException(it)
             }
         }
-    })
-}
+    }
 
 private fun navigatorReceiver(onNavigationAction: (String?) -> Unit) =
     object : BroadcastReceiver() {

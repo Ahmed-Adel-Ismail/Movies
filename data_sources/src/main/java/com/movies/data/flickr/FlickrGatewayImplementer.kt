@@ -20,10 +20,12 @@ class FlickrGatewayImplementer(context: Context) : FlickrGateway {
     override val service: FlickrApiService by lazy { flickerApiService() }
 
     override val apiKey: String by lazy {
-        context.run { packageManager.getApplicationInfo(packageName, GET_META_DATA).metaData }
-            .getString(API_KEY_META_DATA)
-            ?: throw MissingFlickrApiKeyException
+        context.metadata().getString(API_KEY_META_DATA) ?: throw MissingFlickrApiKeyException
     }
+
+    private fun Context.metadata() = packageManager
+        .getApplicationInfo(packageName, GET_META_DATA)
+        .metaData
 
     private fun flickerApiService() = Retrofit.Builder()
         .baseUrl(BASE_URL)

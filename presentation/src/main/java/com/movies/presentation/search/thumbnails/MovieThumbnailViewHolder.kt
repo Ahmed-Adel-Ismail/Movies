@@ -13,11 +13,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.movies.core.searching.results.ThumbnailsPort
-import com.movies.core.searching.results.onRequestImageUrl
+import com.movies.core.searching.results.onRequestInitialImagesUrls
 import com.movies.core.searching.results.onSelectMovie
 import com.movies.presentation.R
 import com.movies.presentation.navigate
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Cancellable
 import io.reactivex.rxkotlin.subscribeBy
@@ -61,7 +61,7 @@ internal class MovieThumbnailViewHolder(parentView: ViewGroup) : RecyclerView.Vi
         }
 
     private fun loadUrlThenImages(item: MovieThumbnails) =
-        item.onRequestImageUrl(AndroidSchedulers.mainThread()) {
+        item.onRequestInitialImagesUrls(mainThread()) {
             image.visibility = VISIBLE
             Glide.with(image.context)
                 .load(it.firstOrNull())
@@ -71,16 +71,13 @@ internal class MovieThumbnailViewHolder(parentView: ViewGroup) : RecyclerView.Vi
                 .fitCenter()
                 .into(image)
                 .clearOnDetach()
-
         }
 
     private fun updateProgress(item: ThumbnailsPort) = item
         .loadingPagedItems
         .share()
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeBy(item::updateErrors) {
-            progress.visibility = if (it) VISIBLE else GONE
-        }
+        .observeOn(mainThread())
+        .subscribeBy(item::updateErrors) { progress.visibility = if (it) VISIBLE else GONE }
 
     fun unbind() {
         image.visibility = INVISIBLE

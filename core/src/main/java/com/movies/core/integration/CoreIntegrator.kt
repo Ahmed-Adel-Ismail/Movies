@@ -1,10 +1,10 @@
 package com.movies.core.integration
 
-import com.movies.core.tracking.Logger
 import com.movies.core.details.DetailsDataSource
 import com.movies.core.migration.MigrationDataSource
 import com.movies.core.searching.SearchDataSource
 import com.movies.core.searching.results.SearchResultsDataSource
+import com.movies.core.tracking.Logger
 
 @DslMarker
 private annotation class CoreIntegration
@@ -43,7 +43,3 @@ object CoreIntegrator {
         Tracking.logger = logger
     }
 }
-
-
-
-
