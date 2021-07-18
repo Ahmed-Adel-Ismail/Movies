@@ -4,7 +4,7 @@ import com.movies.core.entities.NoMoreResultsException
 import org.jetbrains.annotations.TestOnly
 
 internal const val FLICKR_DEFAULT_PAGE = 1
-internal const val FLICKR_DEFAULT_ITEMS_PER_PAGE = 50
+internal const val FLICKR_DEFAULT_ITEMS_PER_PAGE = 100
 
 interface FlickrGateway {
 
