@@ -1,10 +1,16 @@
 # Movies
 An Application that displays movies details
 
+![home screen](https://github.com/Ahmed-Adel-Ismail/Movies/blob/master/read-me-resources/Screenshot-home.jpg)
+![searching](https://github.com/Ahmed-Adel-Ismail/Movies/blob/master/read-me-resources/Screenshot-searching.jpeg)
+![movie details](https://github.com/Ahmed-Adel-Ismail/Movies/blob/master/read-me-resources/Screenshot-movie-details.jpg)
+
 # Architecture
 This Application follows the Ports & Adapters architecture, where the application logic is written in the core module in a plain kotlin/java module, with no external dependencies (only Rx for reactive functional support), and any platform specific code is in another modules, integrated through implementing the declared ports in the core
 
 ![ports and adapters](https://github.com/Ahmed-Adel-Ismail/Movies/blob/master/read-me-resources/hexagonal-architecture.png)
+
+Also Interfaces in Kotlin helped alot in designing the ports, as it can declare abstract properties which can be used in business rules ... new technique was not there in Java that makes defining ports more structured
 
 ## pros
  - Testing: a pure java / kotlin core makes it very easy in testing
@@ -30,9 +36,10 @@ for the latest apk of the app, you can find it in this repository in `releases` 
 
 or download it through this link: https://drive.google.com/file/d/1lPsqrvJNbk5qxbbFHMWYcRmA7pOMhSD0/view?usp=sharing
 
-# What's next
+# What's next (If you'd like to contribute)
 - I wish I could have implemented the UI with compose, but found problems in setting up stuff, so maybe in the coming iteration will convert the UI parts to compose
+- Also the UI needs to be much fancier, and UI tests are still need to be written
 - there were couple of bugs related to triggering API's while rotating the app, I disabled rotation for now till I fix those bugs then enable it again (it was fine till I started implementing the Movie Details screen)
-- with more data to deal with, the project can use Room database instead of in-memory cache, and implement the Migration Port, then everything should be working as expected
+- with more data to deal with, the project can use Room database instead of in-memory cache, and implement the MigrationDataSource Port, then everything should be working as expected
 - Did not have chance to use coroutines that much in this project, just in couple of classes, wish to add more features and they could show some amazing stuff wth coroutines
 
