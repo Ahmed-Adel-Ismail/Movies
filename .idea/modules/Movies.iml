@@ -13,6 +13,9 @@
     <content url="file://$MODULE_DIR$/../..">
       <excludeFolder url="file://$MODULE_DIR$/../../.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/../../build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../codemr/Movies - data sources/html" />
+      <excludeFolder url="file://$MODULE_DIR$/../../codemr/Movies - presentation/html" />
+      <excludeFolder url="file://$MODULE_DIR$/../../codemr/Movies/html" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
