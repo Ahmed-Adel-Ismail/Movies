@@ -12,6 +12,13 @@ This Application follows the Ports & Adapters architecture, where the applicatio
 
 Also Interfaces in Kotlin helped alot in designing the ports, as it can declare abstract properties which can be used in business rules ... new technique was not there in Java that makes defining ports more structured
 
+## How Netflix applied this architecture
+
+https://netflixtechblog.com/ready-for-changes-with-hexagonal-architecture-b315ec967749
+
+The above link shows a detailed description of how this architecture is applied in Netflix, they decided to give there own names to some parts but at the end all are the same things here, like naming the Data-Source ports (Driven Adapters' Ports) as "Repository", or naming the business rules as "Interactors/UseCase/ServiceObject", or naming the Driving adapters (like presentation layer adapters) as "Transparent Layer" ... weather those names come from clean architecture (like Repository, Interactors, UseCase, etc..) or weather they come from DDD (like Entites, ServiceObjects, etc...), or they are custom names ... but at the end the same rules apply to those parts of the architecture
+
+
 ## pros
  - Testing: a pure java / kotlin core makes it very easy in testing
  - Scalability: it is easy to scale as the business rules are defined into ports, any technology can be used to serve more powerful usages while respecting the same business rules
